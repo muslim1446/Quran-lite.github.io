@@ -3583,7 +3583,7 @@
             "audioURL": "https://ia902203.us.archive.org/19/items/Quran-Indonesia_/114.mp3",
             "title": "An-Nas"
         },
-                        {
+                {
             "chapterNumber": 2,
             "totalDuration": "03:49:49",
             "verses": [
@@ -3731,9 +3731,7 @@
             ],
             "audioURL": "https://ia902203.us.archive.org/19/items/Quran-Indonesia_/002.mp3",
             "title": "Al-Baqarah"
-        },    
-                },
-
+        },
                 {
             "chapterNumber": 36,
             "totalDuration": "00:32:54",
@@ -4156,7 +4154,6 @@
             ],
             "audioURL": "https://ia902203.us.archive.org/19/items/Quran-Indonesia_/036.mp3",
             "title": "Ya-Sin"
-
         }
     ]
 }
