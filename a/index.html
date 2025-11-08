@@ -1,553 +1,623 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <!-- Google Analytics and Tag Manager scripts (unchanged) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BR6YH9S6MS"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BR6YH9S6MS');
-  </script>
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-54DDMRW8');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qur'an</title>
+    <link href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>" rel="icon">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+
+
+    <style>
+        /* --- Base & Typography --- */
+        :root {
+            /* Using --vh for mobile browser viewport height consistency */
+            --vh: 100vh;
+        }
+
+        html {
+            box-sizing: border-box;
+            font-size: 62.5%; /* Makes 1rem = 10px, for easier math */
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: inherit;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            font-size: 1.6rem; /* Default 16px */
+            overscroll-behavior: none;
+            overflow: hidden; /* No scrolling on the main page */
+        }
+
+        /* --- Main Layout --- */
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: var(--vh, 100vh);
+            padding: 2rem;
+            padding-bottom: 12rem; /* Leave space for controls at the bottom */
+        }
+
+        /* --- Content Display (The Text) --- */
+        #content-display {
+            text-align: center;
+            width: 100%;
+            max-width: 1200px; /* Max width for very large screens */
+            margin: 0 auto;
+            /* Flex to grow and center content */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* --- NEW --- */
+            /* This ensures the flex children (img, p) don't overflow this container */
+            overflow: hidden; 
+        }
+
+        #chapter-title {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.25rem, 2vw, 2.5rem); /* -50% from original */
+            font-weight: 600;
+            color: #bbbbbb;
+
+            position: fixed;          /* Stays in place when scrolling */
+            top: 2rem;                /* Safe zone from top */
+            left: 2rem;              /* Safe zone from right */
+
+            margin: 0;                /* Remove bottom margin since it's fixed */
+            z-index: 1000;            /* Keep above other content */
+        }
+
+        /* * This style now applies to the <img> tag that we will create,
+         * as the original <p> tag is replaced by the script.
+        */
+        #verse-text { 
+    /* Font styles from the <p> are ignored, but layout/color styles are used */
+    color: #ffffff;
+    margin-bottom: 2.5rem;
+    
+    /* --- Styles for the Image --- */
+    /* This ensures the image is white on a black background */
+    filter: invert(1); 
+    width: 100%;
+    max-width: 1200px; /* Match the container */
+    height: auto;      /* Let aspect ratio determine height */
+    object-fit: contain;
+
+    /* --- MODIFIED: Dynamic Sizing Fix --- */
+    flex-grow: 0;       /* Don't grow to fill space */
+    flex-shrink: 1;     /* Shrink if space is tight */
+    max-height: 60%;    /* Max 60% of the #content-display height */
+    overflow: hidden;   /* Hide any potential overflow */
+
+    /* --- NEW ADDITIONS TO MAKE IT STATIC --- */
+    position: relative;         /* Stabilizes layout to prevent reflow */
+    will-change: auto;          /* Stop GPU re-render flickering */
+    transition: none !important;/* Disable fade or resize transitions */
+    transform: none !important; /* Prevent JS or CSS transform jitter */
+    backface-visibility: hidden;/* Prevent flickering from re-paint */
+    image-rendering: crisp-edges; /* Keeps reloaded images visually consistent */
+    pointer-events: none;       /* Optional: block mouse hover flicker */
+}
+
+
+
+        #translation-text {
+    font-family: 'Inter', sans-serif;
+    /* --- MODIFIED: Use 'vh' for height-aware scaling --- */
+    /* Start size is dynamic, but JS will fine-tune it */
+    font-size: clamp(1.6rem, 2.5vh, 3.5rem);
+    font-weight: 1200;
+   top: 35%;
+    color: #dddddd;
+    line-height: 1.7;
+
+    /* --- NEW: Dynamic Sizing Fix --- */
+    flex-grow: 0;       /* Don't grow to fill space */
+    flex-shrink: 1;     /* Shrink if space is tight */
+    max-height: 35%;    /* Max 35% of the #content-display height */
+    overflow: hidden;   /* CRITICAL: No scroll, clips overflow for JS check */
+
+    /* --- NEW ADDITIONS TO MAKE IT STATIC --- */
+    white-space: pre-wrap;       /* Preserve formatting but prevent movement */
+    text-align: center;          /* Optional: Center the text for stability */
+    position: relative;          /* Keeps layout stable during updates */
+    will-change: auto;           /* Prevent GPU over-optimization flicker */
+    transition: none !important; /* Disable smooth animations during updates */
+    transform: none !important;  /* Prevent JS or CSS transforms from causing jitter */
+}  
+
+/* --- Overlay to reduce visible flicker during PNG refresh --- */
+#content-overlay {
+    position: absolute;
   
-  <!-- SEO and Metadata (unchanged) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "The Noble Quran with English Translation",
-    "url": "https://muslim1446.github.io/",
-    "logo": "https://raw.githubusercontent.com/muslim1446/Quran-english-bahasa.github.io/master/bismillah.ico",
-    "description": "Listen to and read the Noble Quran with English translation and tafsir. Explore chapters and verses with ease.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://muslim1446.github.io/?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Qur'an</title>
-  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/muslim1446/Quran-english-bahasa.github.io/master/bismillah.ico">
-  <meta name="description" content="Listen to and read the Noble Quran with English translation and tafsir. Explore chapters and verses with ease.">
-  <meta
-"keywords" content="Quran, Koran, English Translation, Tafsir, Islam, Muslim, Read Quran, Listen Quran">
-  <meta name="author" content="Muslim1446">
-  <meta property="og:title" content="The Noble Quran with English Translation">
-  <meta property="og:description" content="Listen to and read the Noble Quran with English translation and tafsir.">
-  <meta property="og:image" content="https://raw.githubusercontent.com/muslim1446/Quran-english-bahasa.github.io/master/bismillah.ico">
-  <meta property="og:url" content="https://muslim1446.github.io/">
-  <meta property="og:type" content="website">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran:wght@400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  
-  <!-- 
-    MODERN TV-FRIENDLY STYLES
-    - Removed top bar (clock, weather) HTML
-    - Switched to a dark theme for easier viewing
-    - Added "glassmorphism" hover-to-show control bar
-    - Significantly increased all font sizes for readability
-    - Added clear, strong focus styles for TV navigation
-  -->
-  <style>
-    html {
-      scroll-behavior: smooth;
-    }
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.35); /* translucent black veil */
+    backdrop-filter: blur(2px);      /* softens the reloading edges */
+    pointer-events: none;            /* don’t block clicks */
+    z-index: 5;                      /* sits above verse + translation */
+    transition: opacity 0.3s ease;
+}
 
-    body {
-      /* Dark theme for TV viewing */
-      background-color: #121212;
-      color: #e0e0e0;
-      /* Using Inter as the base font */
-      font-family: 'Inter', sans-serif;
-      /* Larger base font size for TV */
-      font-size: 1.5rem;
-      line-height: 1.7;
-      margin: 0;
-      padding: 0;
-    }
 
-    /* NEW HOVER-TO-SHOW CONTROL BAR
-      - Fixed to the top
-      - Mostly transparent by default
-      - Becomes fully visible on hover
-    */
-    #controls {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      box-sizing: border-box; /* Ensures padding doesn't break width */
-      
-      /* Glassmorphism effect */
-      background-color: rgba(20, 20, 20, 0.7);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      
-      /* Larger padding for easier interaction */
-      padding: 1rem 2rem;
-      text-align: center;
-      
-      /* "Hidden" state */
-      opacity: 0.1;
-      
-      /* Smooth transition for hover */
-      transition: opacity 0.3s ease-in-out;
-      z-index: 1000;
-    }
 
-    #controls:hover {
-      /* "Shown" state */
-      opacity: 1;
-    }
+        /* --- Control Panel (Hidden on Inactivity) --- */
+        #control-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            padding: 2.5rem;
 
-    /* Larger, styled controls */
-    select,
-    button {
-      background-color: #333;
-      color: #f0f0f0;
-      border: 1px solid #555;
-      /* Increased padding and font size for TV */
-      padding: 0.75rem 1rem;
-      font-size: 1.25rem;
-      border-radius: 0.5rem;
-      margin: 0 0.5rem;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      transition: background-color 0.2s, box-shadow 0.2s;
-    }
+            /* Modern "glassmorphism" look */
+            background-color: rgba(20, 20, 20, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
 
-    /* NEW CLEAR FOCUS STYLES
-      - Replaces the JS 'focus' listeners
-      - Provides a highly visible blue glow for TV navigation
-    */
-    select:focus,
-    button:focus {
-      background-color: #444;
-      /* Strong, visible outline */
-      outline: 4px solid #007bff;
-      outline-offset: 2px;
-      box-shadow: 0 0 15px #007bff;
-    }
+            /* Transition for hiding/showing */
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+            will-change: opacity, transform;
+            z-index: 100;
+        }
 
-    /* MAIN CONTENT AREA
-      - Increased max-width for large screens
-      - Increased padding
-      - Pushed down to account for fixed header
-    */
-    #content-container {
-      background-color: #1e1e1e;
-      max-width: 70rem; /* Was 40rem */
-      margin: 8rem auto 2rem auto; /* Pushed down from top */
-      padding: 3rem; /* Was 2rem */
-      border-radius: 1rem; /* Was 0.5rem */
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
+        /* State when user is idle */
+        body.idle #control-panel {
+            opacity: 0;
+            transform: translateY(100%);
+            pointer-events: none; /* Disable clicks when hidden */
+        }
 
-    /* TYPOGRAPHY - ALL SIZES INCREASED
-    */
-    #chapterTitle {
-      font-size: 3.5rem; /* Was 2rem */
-      font-weight: 500;
-      color: #ffffff;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
+        #control-panel label {
+            font-size: clamp(1.6rem, 2vw, 2.2rem);
+            font-weight: 400;
+            color: #ccc;
+        }
 
-    #verseText {
-      font-family: 'Amiri Quran', serif;
-      font-size: 4rem; /* Was 2.5rem */
-      color: #f5e6c4; /* Light golden color for Arabic */
-      line-height: 1.8; /* Increased line height */
-      text-align: right;
-      direction: rtl;
-      margin-bottom: 2.5rem;
-    }
+        #control-panel select {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.8rem, 2.2vw, 2.4rem);
+            padding: 1.2rem 1.5rem;
+            background-color: #333;
+            color: #ffffff;
+            border: 1px solid #555;
+            border-radius: 12px;
+            cursor: pointer;
+            min-width: 200px;
+            /* Appearance for dropdown arrow */
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.5rem center;
+            background-size: 1.6rem;
+            padding-right: 4rem; /* Space for arrow */
+        }
 
-    #translationText {
-      font-size: 2rem; /* Was 1.25rem */
-      color: #c0c0c0;
-      line-height: 1.6;
-      margin-top: 2rem;
-      font-weight: 300;
-    }
+        /* --- CRITICAL: TV Focus Styling --- */
+        /* Highly visible focus state for D-pad/remote navigation */
+        #control-panel select:focus {
+            outline: 4px solid #00AFFF; /* Bright blue/cyan */
+            outline-offset: 2px;
+            box-shadow: 0 0 25px rgba(0, 175, 255, 0.7);
+            background-color: #444;
+        }
 
-    #tafsirText {
-      font-size: 1.75rem; /* Was 1rem */
-      color: #a0a0a0;
-      line-height: 1.6;
-      margin-top: 2rem;
-      font-style: italic;
-      border-top: 1px solid #444;
-      padding-top: 2rem;
-    }
 
-    #loading {
-      font-size: 2rem;
-      text-align: center;
-      padding: 4rem;
-      color: #888;
-    }
+        /* --- Hidden Audio Player --- */
+        #audio-player {
+            display: none;
+        }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      body {
-        font-size: 1.25rem;
-      }
-      #controls {
-        padding: 1rem;
-        opacity: 1; /* Always show on mobile */
-      }
-      select, button {
-        width: 100%;
-        margin: 0.5rem 0;
-        font-size: 1.1rem;
-      }
-      #content-container {
-        margin: 8rem 1rem 1rem 1rem;
-        padding: 1.5rem;
-      }
-      #chapterTitle {
-        font-size: 2.5rem;
-      }
-      #verseText {
-        font-size: 3rem;
-      }
-      #translationText {
-        font-size: 1.5rem;
-      }
-      #tafsirText {
-        font-size: 1.25rem;
-      }
-    }
-  </style>
+#verse-text, 
+#verse-text-next {
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: 15%; /* Safe zone offset from top (adjust as needed, e.g. 3%–8%) */
+  left: 5%;
+  width: 100%;
+  height: auto;
+}
+
+
+
+    </style>
 </head>
 
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54DDMRW8"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <div class="container">
+        <audio id="audio-player" controls></audio>
+<script>
+function updateVerse(newSrc) {
+  const current = document.getElementById('verse-text');
+  const next = document.getElementById('verse-text-next');
 
-  <!-- 
-    REMOVED TOP BAR
-    The entire <div id="top-bar">...</div> element has been deleted.
-    The JavaScript logic for it (getWeatherData, updateClock, etc.) is
-    now re-included below in the <script> tag as requested.
-  -->
-
-  <!-- Control panel (structure unchanged) -->
-  <div id="controls">
-    <select id="chapterSelect" aria-label="Select Chapter"></select>
-    <select id="verseSelect" aria-label="Select Verse"></select>
-    <button id="prevVerse" aria-label="Previous Verse">Previous</button>
-    <button id="nextVerse" aria-label="Next Verse">Next</button>
-  </div>
-
-  <!-- Main content (structure unchanged) -->
-  <div id="content-container">
-    <div id="loading">Loading Qur'an data...</div>
-    <div id="content" style="display: none;">
-      <h1 id="chapterTitle"></h1>
-      <div id="verseText"></div>
-      <div id="translationText"></div>
-      <div id="tafsirText"></div>
+  next.src = newSrc;
+  next.onload = () => {
+    current.style.opacity = '0';
+    next.style.display = 'block';
+    next.style.opacity = '1';
+    setTimeout(() => {
+      current.src = newSrc;
+      next.style.display = 'none';
+      current.style.opacity = '1';
+    }, 300);
+  };
+}
+</script>
+        
+        <div id="content-display">
+            <h1 id="chapter-title">Loading...</h1>
+            <p id="verse-text"></p>
+            <img id="verse-text-next" style="display:none;">
+            <p id="translation-text"></D>
+        </div>
     </div>
-  </div>
 
-  <script>
-    let quranData = [];
-    let currentChapterData = null;
-    const mediaMetadata = new MediaMetadata();
+    <div id="control-panel">
+        <div>
+            <label for="chapterSelect"></label>
+            <select id="chapterSelect"></select>
+        </div>
+        <div>
+            <label for="verseSelect"></label>
+            <select id="verseSelect"></select>
+        </div>
+    </div>
 
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchData();
-      setupEventListeners();
-      setupMediaSession();
-      // RESTORED: Calling the original functions
-      updateRealTimeReport(); 
-      setInterval(updateRealTimeReport, 1000); 
-    });
+    <script>
+        // --- DOM Element References ---
+        const audioPlayer = document.getElementById('audio-player');
+        const chapterSelect = document.getElementById('chapterSelect');
+        const verseSelect = document.getElementById('verseSelect');
+        const chapterTitleEl = document.getElementById('chapter-title');
+        // We get the translation <p> tag, but the verse <p> will be replaced.
+        const translationTextEl = document.getElementById('translation-text');
+        const contentDisplayEl = document.getElementById('content-display');
 
-    // --- DATA FETCHING (Unchanged from original) ---
-    async function fetchData() {
-      try {
-        const response = await fetch('quran-data.json');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        // --- Application State ---
+        let quranData = []; // This will hold the array of chapters from 2TM3TM.json
+        let translationXMLData = null; // This will store the loaded en.sahih.xml data
+        let currentChapterData = {}; // The currently selected chapter object
+        let inactivityTimer;
+
+        // --- Inactivity Timer for Controls ---
+        function showControls() {
+            document.body.classList.remove('idle');
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                document.body.classList.add('idle');
+            }, 5000); // 5 seconds
         }
-        quranData = await response.json();
-        
-        if (quranData.length > 0) {
-          populateChapterSelect();
-          // Load first chapter by default
-          loadChapter(quranData[0].id);
-          document.getElementById('loading').style.display = 'none';
-          document.getElementById('content').style.display = 'block';
-        } else {
-          document.getElementById('loading').textContent = 'Error: No Qur\'an data found.';
-        }
-      } catch (error) {
-        console.error('Error fetching Qur\'an data:', error);
-        document.getElementById('loading').textContent = 'Failed to load Qur\'an data. Please try refreshing the page.';
-      }
-    }
 
-    // --- EVENT LISTENERS (Unchanged logic) ---
-    function setupEventListeners() {
-      const chapterSelect = document.getElementById('chapterSelect');
-      const verseSelect = document.getElementById('verseSelect');
-      const prevVerse = document.getElementById('prevVerse');
-      const nextVerse = document.getElementById('nextVerse');
+        // --- Core Functions ---
 
-      chapterSelect.addEventListener('change', () => {
-        const chapterId = parseInt(chapterSelect.value);
-        loadChapter(chapterId);
-      });
+        /**
+         * Fetches and initializes all required data
+         * FIX: This function now loads BOTH the JSON and XML files.
+         */
+        async function initializeApp() {
+            try {
+                // Fetch both data sources in parallel, as seen in the original file
+                const [jsonResponse, xmlResponse] = await Promise.all([
+                    fetch('https://raw.githubusercontent.com/muslim1446/muslim1446.github.io/refs/heads/master/a/2TM3TM.json'),
+                    fetch('https://raw.githubusercontent.com/muslim1446/muslim1446.github.io/refs/heads/master/a/3TM.xml')
+                ]);
 
-      verseSelect.addEventListener('change', () => {
-        const verseNumber = parseInt(verseSelect.value);
-        updateVerseContent(verseNumber);
-      });
+                if (!jsonResponse.ok) throw new Error(`HTTP error! status: ${jsonResponse.status} for JSON`);
+                if (!xmlResponse.ok) throw new Error(`HTTP error! status: ${xmlResponse.status} for XML`);
 
-      prevVerse.addEventListener('click', () => navigateVerse(-1));
-      nextVerse.addEventListener('click', () => navigateVerse(1));
+                // FIX: Process JSON data correctly. The data is inside the 'chapters' property.
+                const jsonData = await jsonResponse.json();
+                quranData = jsonData.chapters; // This fixes the "Failed to load" error.
 
-      // Keyboard navigation (unchanged)
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') {
-          navigateVerse(-1);
-        } else if (e.key === 'ArrowRight') {
-          navigateVerse(1);
-        }
-      });
-    }
+                // FIX: Process and store XML translation data
+                const xmlString = await xmlResponse.text();
+                const parser = new DOMParser();
+                translationXMLData = parser.parseFromString(xmlString, 'application/xml');
 
-    // --- MEDIA SESSION (Unchanged) ---
-    function setupMediaSession() {
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.setActionHandler('previoustrack', () => navigateVerse(-1));
-        navigator.mediaSession.setActionHandler('nexttrack', () => navigateVerse(1));
-        
-        // Add dummy playback state to show controls
-        navigator.mediaSession.playbackState = "playing";
-        navigator.mediaSession.playbackState = "paused"; 
-      }
-    }
-
-    // --- CORE LOGIC (Unchanged) ---
-    function populateChapterSelect() {
-      const chapterSelect = document.getElementById('chapterSelect');
-      chapterSelect.innerHTML = '';
-      quranData.forEach(chapter => {
-        const option = document.createElement('option');
-        option.value = chapter.id;
-        option.textContent = `${chapter.id}. ${chapter.title} (${chapter.title_arabic}) - ${chapter.verses_count} verses`;
-        chapterSelect.appendChild(option);
-      });
-    }
-
-    function loadChapter(chapterId) {
-      currentChapterData = quranData.find(c => c.id === chapterId);
-      if (currentChapterData) {
-        populateVerseSelect(currentChapterData.verses_count);
-        updateVerseContent(1); // Load first verse
-      }
-    }
-
-    function populateVerseSelect(verseCount) {
-      const verseSelect = document.getElementById('verseSelect');
-      verseSelect.innerHTML = '';
-      for (let i = 1; i <= verseCount; i++) {
-        const option = document.createElement('option');
-        option.value = i;
-        option.textContent = `Verse ${i}`;
-        verseSelect.appendChild(option);
-      }
-    }
-
-    function updateVerseContent(verseNumber) {
-      if (!currentChapterData || verseNumber < 1 || verseNumber > currentChapterData.verses_count) {
-        return;
-      }
-
-      const verseData = currentChapterData.verses.find(v => v.id === verseNumber);
-      if (verseData) {
-        document.getElementById('chapterTitle').textContent = `${currentChapterData.title} (${currentChapterData.title_arabic})`;
-        document.getElementById('verseText').textContent = verseData.text;
-        document.getElementById('translationText').textContent = verseData.translation;
-        document.getElementById('tafsirText').textContent = `Tafsir: ${verseData.tafsir.id_short.text}`;
-        
-        // Update verse select dropdown
-        document.getElementById('verseSelect').value = verseNumber;
-
-        // Update page title (retained from original logic)
-        updateTitle(); // Call original title update function
-
-        // Update Media Session (unchanged)
-        if ('mediaSession' in navigator) {
-          mediaMetadata.title = `Verse ${verseNumber}`;
-          mediaMetadata.artist = currentChapterData.title;
-          mediaMetadata.album = "The Noble Qur'an";
-          navigator.mediaSession.metadata = mediaMetadata;
-        }
-      }
-    }
-
-    function navigateVerse(direction) {
-      const verseSelect = document.getElementById('verseSelect');
-      let currentVerse = parseInt(verseSelect.value);
-      let newVerse = currentVerse + direction;
-
-      if (newVerse >= 1 && newVerse <= currentChapterData.verses_count) {
-        verseSelect.value = newVerse;
-        updateVerseContent(newVerse);
-      } else if (newVerse < 1) {
-        // Go to previous chapter, last verse
-        const currentChapterId = parseInt(document.getElementById('chapterSelect').value);
-        if (currentChapterId > 1) {
-          const newChapterId = currentChapterId - 1;
-          document.getElementById('chapterSelect').value = newChapterId;
-          const newChapterData = quranData.find(c => c.id === newChapterId);
-          loadChapter(newChapterId);
-          // Need to wait for populateVerseSelect to finish, but for now just load last verse
-          updateVerseContent(newChapterData.verses_count);
-        }
-      } else if (newVerse > currentChapterData.verses_count) {
-        // Go to next chapter, first verse
-        const currentChapterId = parseInt(document.getElementById('chapterSelect').value);
-        if (currentChapterId < quranData.length) {
-          const newChapterId = currentChapterId + 1;
-          document.getElementById('chapterSelect').value = newChapterId;
-          loadChapter(newChapterId);
-          // updateVerseContent(1) is already called by loadChapter
-        }
-      }
-    }
-
-    // --- RESTORED ORIGINAL FUNCTIONS ---
-    // All functions from the original file are now back.
-    function updateClock() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        // This element doesn't exist in the HTML, but the function is preserved.
-        const clockElement = document.getElementById('clock');
-        if (clockElement) {
-            clockElement.textContent = `${hours}:${minutes}:${seconds}`;
-        }
-    }
-
-    function updateDate() {
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        // This element doesn't exist in the HTML, but the function is preserved.
-        const dateElement = document.getElementById('date');
-        if (dateElement) {
-            dateElement.textContent = now.toLocaleDateString('en-US', options);
-        }
-    }
-
-    async function getWeatherData() {
-        try {
-            const response = await fetch('https://raw.githubusercontent.com/muslim1446/muslim1446.github.io/refs/heads/master/a/2TM3TM.json');
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-            const temp = data.dataseries[0].temp2m;
-            // This element doesn't exist in the HTML, but the function is preserved.
-            const weatherElement = document.getElementById('weather');
-            if (weatherElement) {
-                weatherElement.textContent = `Temp: ${temp}°C`;
-            }
-        } catch (error) {
-            console.error('Failed to fetch weather data:', error);
-            // This element doesn't exist in the HTML, but the function is preserved.
-            const weatherElement = document.getElementById('weather');
-            if (weatherElement) {
-                weatherElement.textContent = 'Temp: N/A';
-            }
-        }
-    }
-
-    function updateRealTimeReport() {
-        updateClock();
-        updateDate();
-        getWeatherData();
-        updateTitle();
-
-        // This fetch is from the original file
-        fetch('https://raw.githubusercontent.com/muslim1446/muslim1446.github.io/refs/heads/master/a/3TM.xml')
-            .then(response => response.text())
-            .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-            .then(data => {
-                // Original logic preserved, even if elements aren't in HTML
-                const items = data.querySelectorAll("item");
-                let html = ``;
-                items.forEach((el, index) => {
-                    if (index < 5) { // Limit to 5 items
-                        let title = el.querySelector("title").innerHTML;
-                        let link = el.querySelector("link").innerHTML;
-                        // Remove CDATA tags if present
-                        title = title.replace("<![CDATA[", "").replace("]]>", "");
-                        html += `<p><a href="${link}" target="_blank">${title}</a></p>`;
-                    }
+                // Populate selectors and load the first verse
+                populateChapterSelect();
+                populateVerseSelect(); // Populate verse list for the first chapter
+                loadVerse(); // Load the default first verse
+                
+                // Set up event listeners *after* data is loaded
+                chapterSelect.addEventListener('change', () => {
+                    populateVerseSelect(); // Re-populate verse list
+                    loadVerse(); // Load new verse
                 });
-                const reportElement = document.getElementById('real-time-report');
-                if (reportElement) {
-                    reportElement.innerHTML = html;
-                }
-            })
-            .catch(error => {
-                console.error('Failed to fetch real-time report:', error);
-                const reportElement = document.getElementById('real-time-report');
-                if (reportElement) {
-                    reportElement.innerHTML = "<p>Unable to load report.</p>";
-                }
-            });
-    }
+                verseSelect.addEventListener('change', loadVerse);
 
-    // Original updateTitle function, fully restored.
-    function updateTitle() {
-        if (currentChapterData) {
-            const verseSelect = document.getElementById('verseSelect');
-            const currentAyat = verseSelect.value || '1';
-            document.title = `Qur'an - ${currentChapterData.title} : ${currentAyat}`;
+                // --- NEW CODE ---
+                // Add event listener for auto-advancing
+                audioPlayer.addEventListener('ended', playNextVerse);
+                // --- END NEW CODE ---
 
-            // Preload the image as in the original file
-            const chapNum = currentChapterData.id;
-            const verseNum = currentAyat;
-            const img = new Image();
-            img.src = `https://raw.githubusercontent.com/muslim1446/muslim1446.github.io/refs/heads/master/img/${chapNum}_${verseNum}.png`;
-        } else {
-            document.title = "Qur'an";
+            } catch (error) {
+                console.error("Failed to load Qur'an data:", error);
+                // Display user-friendly error
+                contentDisplayEl.innerHTML = `
+                    <h1 id="chapter-title">Error</h1>
+                    <p id="translation-text">Failed to load Qur'an data. Please check your internet connection and refresh the page.</p>
+                `;
+            }
         }
-    }
-    
-    // RESTORED: Original focus/blur listeners
-    // Although CSS :focus is active, I am restoring these
-    // to ensure no "structures" were removed.
-    document.getElementById('chapterSelect').addEventListener('focus', function() {
-        this.style.outline = '3px solid orange'; // Example direct style
-    });
-    document.getElementById('chapterSelect').addEventListener('blur', function() {
-        this.style.outline = ''; // Remove direct style
-    });
-    document.getElementById('verseSelect').addEventListener('focus', function() {
-        this.style.outline = '3px solid orange';
-    });
-    document.getElementById('verseSelect').addEventListener('blur', function() {
-        this.style.outline = '';
-    });
-  </script>
+
+        /**
+         * Populates the Chapter dropdown
+         * FIX: Updated to use the correct data properties from the JSON
+         */
+        function populateChapterSelect() {
+            chapterSelect.innerHTML = ''; // Clear existing
+            quranData.forEach((chapter, index) => {
+                const option = document.createElement('option');
+                option.value = index; // Use the array index as the value
+                option.textContent = `${chapter.chapterNumber}. ${chapter.title} `;
+                chapterSelect.appendChild(option);
+            });
+        }
+
+        /**
+         * Populates the Verse dropdown
+         * FIX: Updated to use the 'verses' array from the JSON
+         */
+        function populateVerseSelect() {
+            verseSelect.innerHTML = ''; // Clear existing
+            const chapterIndex = chapterSelect.value || 0;
+            currentChapterData = quranData[chapterIndex]; // Get the full chapter object
+
+            // The JSON has a 'verses' array, each object has a 'verseNumber'
+            currentChapterData.verses.forEach((verse, index) => {
+                const option = document.createElement('option');
+                option.value = index; // Use the array index as the value
+                option.textContent = `Ayat ${verse.verseNumber}`;
+                verseSelect.appendChild(option);
+            });
+        }
+
+        /**
+         * Loads the selected verse (image), translation (xml), and audio
+         * FIX: This function is completely rewritten to use the correct data sources.
+         */
+        function loadVerse() {
+            const chapterIndex = chapterSelect.value || 0;
+            const verseIndex = verseSelect.value || 0;
+            
+            currentChapterData = quranData[chapterIndex];
+            let verseData = currentChapterData.verses[verseIndex]; // This has timings and verseNumber
+
+            const chapNum = currentChapterData.chapterNumber;
+            const verseNum = verseData.verseNumber;
+
+            // --- Update Chapter Title ---
+            chapterTitleEl.textContent = `${currentChapterData.title} (${chapNum})`;
+
+            // --- FIX: Display Arabic as an Image (like original file) ---
+            // Your new UI expects text, but the data source provides an image.
+            // This code replaces the <p id="verse-text"> with an <img> tag.
+            
+            const oldVerseEl = document.getElementById('verse-text');
+            const verseImage = document.createElement('img');
+            verseImage.id = 'verse-text'; // Give it the same ID to use the CSS styles
+            verseImage.src = `https://raw.githubusercontent.com/muslim1446/muslim1446.github.io/refs/heads/master/img/${chapNum}_${verseNum}.png`;
+            verseImage.alt = `Surah ${chapNum}, Verse ${verseNum}`;
+            
+            // Replace the old <p> with the new <img>
+            if (oldVerseEl) {
+                oldVerseEl.parentNode.replaceChild(verseImage, oldVerseEl);
+            } else {
+                // Fallback in case the element was already replaced
+                contentDisplayEl.insertBefore(verseImage, translationTextEl);
+            }
+
+            // --- FIX: Get Translation from XML data ---
+            let translation = "Translation not found.";
+            if (translationXMLData) {
+                const suraElement = translationXMLData.querySelector(`sura[index="${chapNum}"]`);
+                if (suraElement) {
+                    const ayaElement = suraElement.querySelector(`aya[index="${verseNum}"]`);
+                    if (ayaElement) {
+                        translation = ayaElement.getAttribute('text');
+                    }
+                }
+            }
+            translationTextEl.textContent = translation;
+
+            // --- NEW: DYNAMIC SIZING ---
+            // Adjust font size *after* text content is set
+            adjustTranslationFontSize();
+            // --- END NEW ---
+            
+            // --- Update Audio (Using the logic from your modified file) ---
+            const chapterStr = String(chapNum).padStart(3, '0');
+            const verseStr = String(verseNum).padStart(3, '0');
+            audioPlayer.src = `https://everyayah.com/data/Alafasy_128kbps/${chapterStr}${verseStr}.mp3`;
+            audioPlayer.play().catch(e => console.warn("Audio autoplay blocked.", e));
+
+
+            // --- Update Page Title & Media Session ---
+            updateTitle();
+            updateMediaSession();
+        }
+
+        // --- NEW CODE ---
+        /**
+         * Automatically advances to the next verse when the current one ends.
+         * Moves to the next chapter if the end of a surah is reached.
+         */
+        function playNextVerse() {
+            console.log("Audio ended, advancing to next verse...");
+
+            let currentChapterIndex = parseInt(chapterSelect.value);
+            let currentVerseIndex = parseInt(verseSelect.value);
+
+            const totalVersesInChapter = verseSelect.options.length;
+            const totalChapters = chapterSelect.options.length;
+
+            let nextVerseIndex = currentVerseIndex + 1;
+            let nextChapterIndex = currentChapterIndex;
+
+            // Check if we are at the end of the current chapter
+            if (nextVerseIndex >= totalVersesInChapter) {
+                // Yes, move to the first verse of the next chapter
+                nextVerseIndex = 0;
+                nextChapterIndex = currentChapterIndex + 1;
+
+                // Check if we are at the end of the entire Qur'an
+                if (nextChapterIndex >= totalChapters) {
+                    // We are at the end of the last surah. Stop playback.
+                    console.log("End of Qur'an playback.");
+                    // To loop back to the beginning, uncomment the next two lines:
+                    // nextChapterIndex = 0;
+                    // nextVerseIndex = 0;
+                    
+                    // For now, just stop
+                    return;
+                }
+                
+                // If we are changing chapters, update the chapter select and repopulate the verse select
+                chapterSelect.value = nextChapterIndex;
+                populateVerseSelect(); // This is crucial!
+                
+            }
+
+            // Set the new verse index
+            verseSelect.value = nextVerseIndex;
+            
+            // Load and play the new verse
+            loadVerse();
+        }
+        
+        /**
+         * --- NEW: DYNAMIC SIZING FUNCTION ---
+         * Dynamically adjusts the translation font size to fit its container
+         * without scrolling.
+         */
+        function adjustTranslationFontSize() {
+            const el = translationTextEl;
+            if (!el) return; // Exit if element not found
+
+            // 1. Define min/max font sizes in pixels (based on 1rem = 10px)
+            const minFontSizePx = 1.6 * 10; // 16px (1.6rem)
+            
+            // 2. Calculate max size from CSS clamp(1.6rem, 2.5vh, 3.5rem)
+            const vhInPx = window.innerHeight * 0.025; // 2.5vh in pixels
+            const remInPx = 3.5 * 10; // 3.5rem in pixels
+            // The max size is the *smaller* of the vh and rem limits
+            const maxFontSizePx = Math.min(vhInPx, remInPx);
+
+            // 3. Start with the maximum possible size
+            el.style.fontSize = `${maxFontSizePx}px`;
+
+            let currentFontSize = maxFontSizePx;
+            let iterations = 0;
+            const maxIterations = 50; // Safety break to prevent infinite loops
+
+            // 4. Iteratively shrink font size by 1px until it fits
+            // Check scrollHeight (total content height) vs clientHeight (visible box height)
+            while (el.scrollHeight > el.clientHeight && iterations < maxIterations) {
+                currentFontSize -= 1; // Shrink by 1px
+
+                if (currentFontSize < minFontSizePx) {
+                    // Don't go below the minimum size
+                    el.style.fontSize = `${minFontSizePx}px`;
+                    break; 
+                }
+                
+                el.style.fontSize = `${currentFontSize}px`;
+                iterations++;
+            }
+        }
+        // --- END NEW CODE ---
+
+
+        /**
+         * Updates the browser tab/window title
+         */
+        function updateTitle() {
+            if (currentChapterData && currentChapterData.verses) {
+                const verseIndex = verseSelect.value || 0;
+                const verseNum = currentChapterData.verses[verseIndex].verseNumber;
+                document.title = `Qur'an - ${currentChapterData.title} : ${verseNum}`;
+            } else {
+                document.title = "Qur'an";
+            }
+        }
+
+        /**
+         * Updates the OS-level Media Session for TV/mobile lock screens
+         */
+        function updateMediaSession() {
+            if ('mediaSession' in navigator && currentChapterData) {
+                const verseIndex = verseSelect.value || 0;
+                const verseNum = currentChapterData.verses[verseIndex].verseNumber;
+                
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: `Ayat ${verseNum}`,
+                    artist: `Surah ${currentChapterData.title} `,
+                    album: 'The Noble Qur\'an',
+                });
+            }
+        }
+
+        /**
+         * Handles viewport height changes (e.g., mobile browser bars)
+         */
+        function setViewportHeight() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh * 100}px`);
+        }
+
+        // --- Event Listeners ---
+        
+        // Initial setup on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+            setViewportHeight();
+        });
+
+        // Update viewport on resize
+        window.addEventListener('resize', () => {
+            setViewportHeight();
+            // --- NEW ---
+            adjustTranslationFontSize(); // Re-adjust on resize
+            // --- END NEW ---
+        });
+
+        // --- Inactivity Listeners ---
+        document.addEventListener('mousemove', showControls);
+        document.addEventListener('keydown', showControls);
+        document.addEventListener('touchstart', showControls);
+        document.addEventListener('click', showControls);
+        
+        // Initial call to set the timer
+        showControls();
+
+    </script>
 </body>
 </html>
