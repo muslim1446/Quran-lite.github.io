@@ -4,4 +4,4 @@ Allow: /
 
 # Specify the location of the sitemap.
 # TODO: Replace 'https://your-domain.com' with your actual domain.
-Sitemap: https://muslim1446.github.io/sitemap.xml
+Sitemap: https://Quran-lite.github.io/sitemap.xml
