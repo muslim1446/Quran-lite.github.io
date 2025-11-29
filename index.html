@@ -361,7 +361,7 @@
                 elements.selects.reciter.value = saved.reciter;
             }
 
-            // Translation
+            // Translation (Text)
             let trans = 'en'; // Default
             if (urlParams.has('trans')) trans = urlParams.get('trans');
             else if (saved.trans) trans = saved.trans;
@@ -369,6 +369,13 @@
             
             if (elements.selects.trans.querySelector(`option[value="${trans}"]`)) {
                 elements.selects.trans.value = trans;
+            }
+
+            // Audio Translation - NEW ENGINEERING
+            if (urlParams.has('audio_trans') && TRANSLATION_AUDIO_CONFIG[urlParams.get('audio_trans')]) {
+                elements.selects.transAudio.value = urlParams.get('audio_trans');
+            } else if (saved.transAudio && TRANSLATION_AUDIO_CONFIG[saved.transAudio]) {
+                elements.selects.transAudio.value = saved.transAudio;
             }
         }
 
@@ -386,14 +393,15 @@
                 chapter: parseInt(elements.selects.chapter.value),
                 verse: parseInt(elements.selects.verse.value),
                 reciter: elements.selects.reciter.value,
-                trans: elements.selects.trans.value
+                trans: elements.selects.trans.value,
+                transAudio: elements.selects.transAudio.value // New state tracking
             };
             localStorage.setItem('quranState', JSON.stringify(state));
 
-            // SEO: Update URL without reload
+            // SEO: Update URL without reload (Now includes audio_trans)
             const chNum = quranData[state.chapter].chapterNumber;
             const vNum = quranData[state.chapter].verses[state.verse].verseNumber;
-            const newUrl = `?chapter=${chNum}&verse=${vNum}&reciter=${state.reciter}&trans=${state.trans}`;
+            const newUrl = `?chapter=${chNum}&verse=${vNum}&reciter=${state.reciter}&trans=${state.trans}&audio_trans=${state.transAudio}`;
             window.history.pushState({path: newUrl}, '', newUrl);
 
             // SEO: Update Meta
