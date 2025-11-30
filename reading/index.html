@@ -5,8 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
     <title>QuranLite - Online Quran Audio, Surah Player & Translations</title>
-    <meta name="description" content="Read and listen to the Noble Quran online. Features synchronized MP3 audio, verse-by-verse recitation (Surah), and translations in English, Urdu, and more.">
-    <meta name="keywords" content="Quran Audio, Ayah Player, Online Quran, Quran Translation, Mishary Alafasy, Sudais, Verse by Verse, Quran Focus, Digital Quran">
+    <meta name="description" content="Read and listen to the Noble Quran online. Features synchronized MP3 audio, verse-by-verse recitation (Surah), and translations.">
     
     <meta name="author" content="QuranLite Open Source">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -16,11 +15,10 @@
     <meta property="og:title" content="QuranLite - The Distraction-Free Quran Player">
     <meta property="og:description" content="Listen to the Noble Quran verse by verse with synchronized text and translations.">
     <meta property="og:image" content="https://Quran-lite.github.io/social-preview.jpg"> 
-    <meta property="og:url" content="https://Quran-lite.github.io/">
+    <meta property="og:url" content="https://Quran-lite.github.io/reading/">
     <meta property="og:type" content="website">
-   <base href="https://Quran-lite.github.io/">
 
-    <link rel="canonical" id="dynamic-canonical" href="https://Quran-lite.github.io/">
+    <link rel="canonical" id="dynamic-canonical" href="https://Quran-lite.github.io/reading/">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +47,7 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "QuranLite",
-      "url": "https://Quran-lite.github.io/",
+      "url": "https://Quran-lite.github.io/reading/",
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "All",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -202,7 +200,6 @@
         }
 
         /* --- TV D-PAD FOCUS STATE (CRITICAL) --- */
-        /* When user navigates with remote, this lights up */
         select:focus { 
             outline: none; 
             border-color: var(--accent); 
@@ -445,12 +442,15 @@
                 elements.loaderText.style.display = 'none';
                 elements.startBtn.style.display = 'block';
                 
+                // Logic Change: If user is here, they likely wanted to "Start".
+                // If they came from the root (redirect), we can auto-click or just show Continue.
+                // But to be safe and consistent with your request, we show the button.
+                
                 const chIdx = elements.selects.chapter.value;
                 if(quranData[chIdx]) {
                     elements.startBtn.textContent = `Continue`;
                 }
                 
-                // Focus start button for TV users immediately
                 elements.startBtn.focus();
 
             } catch (error) {
@@ -533,16 +533,17 @@
             const transName = TRANSLATIONS_CONFIG[state.trans].name;
             const reciterName = RECITERS_CONFIG[state.reciter].name;
 
-// CHANGE THIS IN /reading/index.html ONLY
-const newUrl = `reading/?chapter=${chNum}&verse=${vNum}&reciter=${state.reciter}&trans=${state.trans}`;
+            // LOGIC MODIFICATION: Use relative path '?' instead of 'reading/?' 
+            // because we are already in the 'reading/' directory.
+            const newUrl = `?chapter=${chNum}&verse=${vNum}&reciter=${state.reciter}&trans=${state.trans}&audio_trans=${state.audio_trans}`;
+            window.history.pushState({path: newUrl}, '', newUrl);
 
-// Update Canonical Link
-const canonicalLink = document.getElementById('dynamic-canonical');
-// We want Google to index this specific reading page
-const fullUrl = `https://Quran-lite.github.io/reading/?chapter=${chNum}`; 
-if (canonicalLink) {
-    canonicalLink.href = fullUrl;
-}
+            // Update Canonical Link Dynamically
+            const canonicalLink = document.getElementById('dynamic-canonical');
+            const fullUrl = `https://Quran-lite.github.io/reading/${newUrl}`;
+            if (canonicalLink) {
+                canonicalLink.href = fullUrl;
+            }
 
             const pageTitle = `${chObj.title} - Verse ${vNum} | QuranLite`;
             document.title = pageTitle;
@@ -575,7 +576,7 @@ if (canonicalLink) {
                             "@type": "ListItem",
                             "position": 2,
                             "name": `Surah ${chapterName}`,
-                            "item": `https://Quran-lite.github.io/?chapter=${chapterNum}`
+                            "item": `https://Quran-lite.github.io/reading/?chapter=${chapterNum}`
                         }, {
                             "@type": "ListItem",
                             "position": 3,
