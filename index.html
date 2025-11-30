@@ -532,7 +532,7 @@
             const transName = TRANSLATIONS_CONFIG[state.trans].name;
             const reciterName = RECITERS_CONFIG[state.reciter].name;
 
-            const newUrl = `?chapter=${chNum}&verse=${vNum}&reciter=${state.reciter}&trans=${state.trans}&audio_trans=${state.audio_trans}`;
+            const newUrl = `reading/?chapter=${chNum}&verse=${vNum}&reciter=${state.reciter}&trans=${state.trans}&audio_trans=${state.audio_trans}`;
             window.history.pushState({path: newUrl}, '', newUrl);
 
             // Update Canonical Link Dynamically
