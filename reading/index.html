@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://everyayah.com"> 
     <link rel="preconnect" href="https://raw.githubusercontent.com"> 
     
-    <link href="data:image/svg+xml,<svg xmlns=%22http://www.w.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💠</text></svg>" rel="icon">
+    <link href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💠</text></svg>" rel="icon">
     <link rel="icon" href="https://quran-lite.github.io/favicon.ico" sizes="any">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -40,19 +40,6 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-PDWXFDCQRH', { 'send_page_view': false });
-    </script>
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "QuranLite",
-      "url": "https://Quran-lite.github.io/reading/",
-      "applicationCategory": "EducationalApplication",
-      "operatingSystem": "All",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-      "description": "Free, open-source Quran player featuring synchronized audio recitation and multi-language translations."
-    }
     </script>
 
     <style>
@@ -558,9 +545,17 @@
             updateGoogleSchema(chNum, vNum, chObj.title, transName, reciterName);
         }
 
+        // --- FIX: REPLACED FUNCTION ---
+        // This new function adds a `WebPage` schema and correctly
+        // formats the `BreadcrumbList` for better SEO.
         function updateGoogleSchema(chapterNum, verseNum, chapterName, transName, reciterName) {
             const oldSchema = document.getElementById('dynamic-schema-item');
             if (oldSchema) oldSchema.remove();
+
+            const canonicalUrl = window.location.href; // Get the full, updated URL
+            const rootUrl = "https://Quran-lite.github.io/";
+            const surahUrl = `https://Quran-lite.github.io/reading/?chapter=${chapterNum}`;
+            const metaDesc = `Read and Listen to Surah ${chapterName} Verse ${verseNum}. Translation: ${transName}. Recitation by ${reciterName}.`;
 
             const schemaData = {
                 "@context": "https://schema.org",
@@ -570,19 +565,31 @@
                         "itemListElement": [{
                             "@type": "ListItem",
                             "position": 1,
-                            "name": "Quran",
-                            "item": "https://Quran-lite.github.io/"
+                            "name": "QuranLite", // Use site name
+                            "item": rootUrl
                         }, {
                             "@type": "ListItem",
                             "position": 2,
                             "name": `Surah ${chapterName}`,
-                            "item": `https://Quran-lite.github.io/reading/?chapter=${chapterNum}`
+                            "item": surahUrl
                         }, {
                             "@type": "ListItem",
                             "position": 3,
                             "name": `Ayah ${verseNum}`,
-                            "item": window.location.href
+                            "item": canonicalUrl // Current page URL
                         }]
+                    },
+                    {
+                        "@type": "WebPage", // Describe the content of *this* page
+                        "@id": canonicalUrl,
+                        "url": canonicalUrl,
+                        "name": `${chapterName} - Verse ${verseNum} | QuranLite`,
+                        "description": metaDesc, // Re-use the meta description
+                        "isPartOf": {
+                            "@type": "WebSite",
+                            "url": rootUrl,
+                            "name": "QuranLite"
+                        }
                     }
                 ]
             };
@@ -593,6 +600,7 @@
             script.text = JSON.stringify(schemaData);
             document.head.appendChild(script);
         }
+        // --- END OF FIX ---
 
         function populateChapterSelect() {
             elements.selects.chapter.innerHTML = '';
