@@ -834,11 +834,13 @@
         }
 
         function setupEventListeners() {
-            elements.startBtn.addEventListener('click', () => {
-                elements.overlay.style.opacity = 0;
-                setTimeout(() => elements.overlay.style.display = 'none', 500);
-                loadVerse(true); 
-            });
+/* --- READING PAGE: PLAYER LOGIC --- */
+elements.startBtn.addEventListener('click', () => {
+    // Standard behavior: Hide overlay and play audio
+    elements.overlay.style.opacity = 0;
+    setTimeout(() => elements.overlay.style.display = 'none', 500);
+    loadVerse(true); 
+});
 
             elements.selects.chapter.addEventListener('change', () => { populateVerseSelect(); loadVerse(true); });
             elements.selects.verse.addEventListener('change', () => loadVerse(true));
