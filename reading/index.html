@@ -160,6 +160,8 @@
             overflow-y: auto; white-space: pre-wrap; text-align: center;
             padding: 0 2rem; scrollbar-width: none;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            /* Smooth transition for direction changes */
+            transition: opacity 0.3s;
         }
         #translation-text::-webkit-scrollbar { display: none; }
 
@@ -217,7 +219,9 @@
                 width: 92%; margin: 0 auto;
                 background: rgba(255,255,255,0.03);
                 border-radius: 12px 12px 0 0;
-                padding: 2rem; text-align: left;
+                padding: 2rem; 
+                /* CHANGED: 'start' handles LTR and RTL correctly (Left for English, Right for Arabic) */
+                text-align: start; 
                 font-size: 1.8rem !important;
                 flex-grow: 1; overflow-y: auto;
                 border: 1px solid rgba(255,255,255,0.05);
@@ -272,7 +276,7 @@
                 <img id="verse-text" class="active-verse-img" alt="Quran Verse Arabic Text" width="600" height="300" loading="eager">
                 <img id="verse-text-next" alt="Next Quran Verse" width="600" height="300" loading="lazy">
             </div>
-            <div id="translation-text">Select a Surah to begin reading...</div>
+            <div id="translation-text" dir="auto">Select a Surah to begin reading...</div>
         </div>
     </div>
 
@@ -352,6 +356,10 @@
 
         const FTT_URL = 'https://raw.githubusercontent.com/Quran-lite/Quran-lite.github.io/refs/heads/master/a/FTT.XML';
 
+        // Set of known RTL Language IDs based on the keys in TRANSLATIONS_CONFIG
+        // ar: Arabic, dv: Divehi, fa: Persian, he: Hebrew, ku: Kurdish (Sorani), ps: Pashto, sd: Sindhi, ur: Urdu, ug: Uyghur
+        const RTL_CODES = new Set(['ar', 'dv', 'fa', 'he', 'ku', 'ps', 'sd', 'ur', 'ug']);
+
         // STATE & VARIABLES
         const elements = {
             overlay: document.getElementById('loading-overlay'),
@@ -429,10 +437,6 @@
                 elements.spinner.style.display = 'none';
                 elements.loaderText.style.display = 'none';
                 elements.startBtn.style.display = 'block';
-                
-                // Logic Change: If user is here, they likely wanted to "Start".
-                // If they came from the root (redirect), we can auto-click or just show Continue.
-                // But to be safe and consistent with your request, we show the button.
                 
                 const chIdx = elements.selects.chapter.value;
                 if(quranData[chIdx]) {
@@ -521,12 +525,9 @@
             const transName = TRANSLATIONS_CONFIG[state.trans].name;
             const reciterName = RECITERS_CONFIG[state.reciter].name;
 
-            // LOGIC MODIFICATION: Use relative path '?' instead of 'reading/?' 
-            // because we are already in the 'reading/' directory.
             const newUrl = `?chapter=${chNum}&verse=${vNum}&reciter=${state.reciter}&trans=${state.trans}&audio_trans=${state.audio_trans}`;
             window.history.pushState({path: newUrl}, '', newUrl);
 
-            // Update Canonical Link Dynamically
             const canonicalLink = document.getElementById('dynamic-canonical');
             const fullUrl = `https://Quran-lite.github.io/reading/${newUrl}`;
             if (canonicalLink) {
@@ -546,14 +547,11 @@
             updateGoogleSchema(chNum, vNum, chObj.title, transName, reciterName);
         }
 
-        // --- FIX: REPLACED FUNCTION ---
-        // This new function adds a `WebPage` schema and correctly
-        // formats the `BreadcrumbList` for better SEO.
         function updateGoogleSchema(chapterNum, verseNum, chapterName, transName, reciterName) {
             const oldSchema = document.getElementById('dynamic-schema-item');
             if (oldSchema) oldSchema.remove();
 
-            const canonicalUrl = window.location.href; // Get the full, updated URL
+            const canonicalUrl = window.location.href; 
             const rootUrl = "https://Quran-lite.github.io/";
             const surahUrl = `https://Quran-lite.github.io/reading/?chapter=${chapterNum}`;
             const metaDesc = `Read and Listen to Surah ${chapterName} Verse ${verseNum}. Translation: ${transName}. Recitation by ${reciterName}.`;
@@ -566,7 +564,7 @@
                         "itemListElement": [{
                             "@type": "ListItem",
                             "position": 1,
-                            "name": "QuranLite", // Use site name
+                            "name": "QuranLite", 
                             "item": rootUrl
                         }, {
                             "@type": "ListItem",
@@ -577,15 +575,15 @@
                             "@type": "ListItem",
                             "position": 3,
                             "name": `Ayah ${verseNum}`,
-                            "item": canonicalUrl // Current page URL
+                            "item": canonicalUrl 
                         }]
                     },
                     {
-                        "@type": "WebPage", // Describe the content of *this* page
+                        "@type": "WebPage", 
                         "@id": canonicalUrl,
                         "url": canonicalUrl,
                         "name": `${chapterName} - Verse ${verseNum} | QuranLite`,
-                        "description": metaDesc, // Re-use the meta description
+                        "description": metaDesc, 
                         "isPartOf": {
                             "@type": "WebSite",
                             "url": rootUrl,
@@ -601,7 +599,6 @@
             script.text = JSON.stringify(schemaData);
             document.head.appendChild(script);
         }
-        // --- END OF FIX ---
 
         function populateChapterSelect() {
             elements.selects.chapter.innerHTML = '';
@@ -765,6 +762,14 @@
             const tid = elements.selects.trans.value;
             if (!translationCache[tid]) return;
             
+            // --- FIX START: Detect RTL based on language code ---
+            if (RTL_CODES.has(tid)) {
+                elements.display.trans.dir = 'rtl';
+            } else {
+                elements.display.trans.dir = 'ltr';
+            }
+            // --- FIX END ---
+
             const sura = translationCache[tid].querySelector(`sura[index="${chNum}"]`);
             const aya = sura ? sura.querySelector(`aya[index="${vNum}"]`) : null;
             elements.display.trans.textContent = aya ? aya.getAttribute('text') : "Translation unavailable";
@@ -904,7 +909,7 @@
         function updateMediaSession(surah, verse, artist) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
-                    title: `Ayah ${verse}`,
+                    title: `${surah} Ayah ${verse}`,
                     artist: artist,
                     album: `Surah ${surah}`,
                     artwork: [{ src: 'https://Quran-lite.github.io/social-preview.jpg', sizes: '512x512', type: 'image/jpeg' }]
