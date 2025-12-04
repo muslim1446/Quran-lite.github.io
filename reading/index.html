@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" prefix="og: http://ogp.me/ns# book: http://ogp.me/ns/book#">
 <head>
+<script>
+    // 1. Redirect GitHub.io traffic to Pages.dev
+    // This ensures everyone uses the same localStorage database
+    if (window.location.hostname.includes('github.io')) {
+        var newUrl = window.location.href.replace('github.io', 'pages.dev');
+        
+        // This tells Google "The new page is the real one" (301-like behavior for JS)
+        window.location.replace(newUrl); 
+    }
+</script>
+<script>
+    // 1. Redirect GitHub.io traffic to Pages.dev
+    // This ensures everyone uses the same localStorage database
+    if (window.location.hostname.includes('github.io')) {
+        var newUrl = window.location.href.replace('github.io', 'pages.dev');
+        
+        // This tells Google "The new page is the real one" (301-like behavior for JS)
+        window.location.replace(newUrl); 
+    }
+</script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
@@ -14,11 +34,11 @@
     <meta property="og:site_name" content="QuranLite">
     <meta property="og:title" content="QuranLite - The Distraction-Free Quran Player">
     <meta property="og:description" content="Listen to the Noble Quran verse by verse with synchronized text and translations.">
-    <meta property="og:image" content="https://Quran-lite.github.io/social-preview.jpg"> 
-    <meta property="og:url" content="https://Quran-lite.github.io/reading/">
+    <meta property="og:image" content="https://Quran-lite.pages.dev/social-preview.jpg"> 
+    <meta property="og:url" content="https://Quran-lite.pages.dev/reading/">
     <meta property="og:type" content="website">
 
-    <link rel="canonical" id="dynamic-canonical" href="https://Quran-lite.github.io/reading/">
+    <link rel="canonical" id="dynamic-canonical" href="https://Quran-lite.pages.dev/reading/">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +46,7 @@
     <link rel="preconnect" href="https://raw.githubusercontent.com"> 
     
     <link href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💠</text></svg>" rel="icon">
-    <link rel="icon" href="https://quran-lite.github.io/favicon.ico" sizes="any">
+    <link rel="icon" href="https://Quran-lite.pages.dev/favicon.ico" sizes="any">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript>
@@ -543,7 +563,7 @@
             window.history.pushState({path: newUrl}, '', newUrl);
 
             const canonicalLink = document.getElementById('dynamic-canonical');
-            const fullUrl = `https://Quran-lite.github.io/reading/${newUrl}`;
+            const fullUrl = `https://Quran-lite.pages.dev/reading/${newUrl}`;
             if (canonicalLink) {
                 canonicalLink.href = fullUrl;
             }
@@ -566,8 +586,8 @@
             if (oldSchema) oldSchema.remove();
 
             const canonicalUrl = window.location.href; 
-            const rootUrl = "https://Quran-lite.github.io/";
-            const surahUrl = `https://Quran-lite.github.io/reading/?chapter=${chapterNum}`;
+            const rootUrl = "https://Quran-lite.pages.dev/";
+            const surahUrl = `https://Quran-lite.pages.dev/reading/?chapter=${chapterNum}`;
             const metaDesc = `Read and Listen to Surah ${chapterName} Verse ${verseNum}. Translation: ${transName}. Recitation by ${reciterName}.`;
 
             const schemaData = {
@@ -923,7 +943,7 @@
                     title: `${surah} Ayah ${verse}`,
                     artist: artist,
                     album: `Surah ${surah}`,
-                    artwork: [{ src: 'https://Quran-lite.github.io/social-preview.jpg', sizes: '512x512', type: 'image/jpeg' }]
+                    artwork: [{ src: 'https://Quran-lite.pages.dev/social-preview.jpg', sizes: '512x512', type: 'image/jpeg' }]
                 });
                 navigator.mediaSession.setActionHandler('nexttrack', nextVerse);
             }
