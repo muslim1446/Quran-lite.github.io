@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-    // 1. Redirect GitHub.io traffic to Pages.dev
-    // This ensures everyone uses the same localStorage database
-    if (window.location.hostname.includes('github.io')) {
-        var newUrl = window.location.href.replace('github.io', 'pages.dev');
-        
-        // This tells Google "The new page is the real one" (301-like behavior for JS)
-        window.location.replace(newUrl); 
-    }
-</script>
+    <script>
+        // 1. Redirect GitHub.io traffic to Pages.dev
+        if (window.location.hostname.includes('github.io')) {
+            var newUrl = window.location.href.replace('github.io', 'pages.dev');
+            window.location.replace(newUrl); 
+        }
+    </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Who is reading? - QuranLite</title>
@@ -18,430 +15,423 @@
     <meta name="theme-color" content="#050505">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="canonical" href="https://Quran-lite.pages.dev/">
 
-<link rel="canonical" href="https://Quran-lite.pages.dev/">
-
-<link rel="canonical" href="https://Quran-lite.pages.dev/reading/">
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PDWXFDCQRH"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDWXFDCQRH"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-PDWXFDCQRH', { 'send_page_view': false });
+      gtag('config', 'G-PDWXFDCQRH');
     </script>
 
-    
     <style>
-        :root { --bg: #050505; --text: #fff; --accent: #0FB; --surface: #141414; }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        :root {
+            --bg-color: #050505;
+            --card-bg: #111;
+            --text-main: #fff;
+            --text-muted: #888;
+            --accent: #2ca4ab;
+            --danger: #ff4444;
+        }
+
         body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 85%);
-            color: var(--text);
-            height: 100vh;
-            width: 100vw;
+            margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden; /* TV NO SCROLL */
-            user-select: none;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scroll on TV */
         }
 
         /* --- Header --- */
-        .logo {
-            position: absolute; top: 8vh;
-            font-size: 1.5rem; font-weight: 800; letter-spacing: 2px;
-            color: #333; text-transform: uppercase;
-            transition: opacity 0.5s;
+        h1 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
         }
 
-        .main-title {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 400;
-            margin-bottom: 5vh;
-            opacity: 0; animation: fadeDown 1s ease forwards 0.2s;
-            transition: opacity 0.5s;
-        }
-
-        /* --- Profile Grid --- */
-        .profile-container {
+        /* --- Grid Layout --- */
+        .profile-grid {
             display: flex;
-            gap: 2vw;
+            gap: 2rem;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
-            max-width: 90vw;
-            z-index: 10;
-            transition: opacity 0.5s, transform 0.5s, filter 0.5s;
+            max-width: 800px;
         }
 
-        /* --- The Profile Card --- */
+        /* --- Profile Card --- */
         .profile-card {
-            display: flex; flex-direction: column; align-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
             cursor: pointer;
-            width: 130px; /* Fixed for TV consistency */
-            opacity: 0;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            transition: transform 0.2s ease;
-            position: relative;
-            outline: none; /* We use custom focus styles */
+            transition: transform 0.2s, opacity 0.2s;
+            width: 120px;
         }
-        
-        /* Staggered Animation */
-        .profile-card:nth-child(1) { animation-delay: 0.1s; }
-        .profile-card:nth-child(2) { animation-delay: 0.2s; }
-        .profile-card:nth-child(3) { animation-delay: 0.3s; }
-        .profile-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .profile-card:hover, .profile-card:focus {
+            transform: scale(1.1);
+            outline: none;
+        }
 
         .avatar {
-            width: 10vw; height: 10vw;
-            max-width: 120px; max-height: 120px;
-            min-width: 80px; min-height: 80px;
-            border-radius: 8px;
-            background: #333;
-            margin-bottom: 1.5rem;
-            display: flex; justify-content: center; align-items: center;
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 3rem;
-            border: 3px solid transparent;
-            transition: all 0.2s ease-in-out;
+            font-weight: 600;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border: 2px solid transparent;
+        }
+
+        .profile-card:focus .avatar {
+            border-color: var(--accent);
         }
 
         .profile-name {
-            font-size: 1.3rem; color: #888; transition: color 0.3s;
+            font-size: 1.1rem;
+            color: var(--text-muted);
             text-align: center;
         }
 
-        /* --- TV FOCUS STATES (CRITICAL) --- */
-        /* Mouse Hover OR Keyboard/Remote Focus */
-        .profile-card:hover, .profile-card:focus { 
-            transform: scale(1.15); 
-            z-index: 20; 
+        /* --- Add Button Specifics --- */
+        .add-btn .avatar {
+            background-color: #222;
+            color: #555;
+            border: 2px dashed #444;
         }
         
-        .profile-card:hover .avatar, .profile-card:focus .avatar { 
-            border-color: #fff; 
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); 
-        }
-        
-        .profile-card:hover .profile-name, .profile-card:focus .profile-name { 
-            color: #fff; font-weight: 600; 
+        .add-btn:hover .avatar {
+            background-color: #333;
+            color: var(--text-main);
+            border-color: var(--text-main);
         }
 
-        /* Add Profile Icon Style */
-        .add-profile-btn .avatar { background: transparent; border: 2px solid #333; color: #333; }
-        .add-profile-btn:hover .avatar, .add-profile-btn:focus .avatar { 
-            border-color: #fff; background: #fff; color: #000; 
-        }
-
-        /* --- ADD PROFILE OVERLAY --- */
-        .add-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+        /* --- Overlay (Add Profile UI) --- */
+        .profile-selection-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
             z-index: 100;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.4s ease;
         }
 
-        .add-overlay.active { opacity: 1; pointer-events: all; }
-
-        .add-content {
-            text-align: center;
-            transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            width: 90%; max-width: 600px;
-        }
-        .add-overlay.active .add-content { transform: scale(1); }
-
-        .add-title { font-size: 2.5rem; margin-bottom: 0.5rem; font-weight: 600; }
-        .add-subtitle { color: #666; margin-bottom: 2rem; font-size: 1.1rem; }
-
-        /* Icon Selector Row */
-        .avatar-selector {
-            display: flex; justify-content: center; gap: 1.5rem;
-            margin-bottom: 2.5rem;
+        .profile-selection-overlay.active {
+            opacity: 1;
+            pointer-events: all;
         }
 
-        .avatar-option {
-            width: 60px; height: 60px;
-            border-radius: 50%;
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .profile-selection-overlay.active .input-group {
+            transform: translateY(0);
+        }
+
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            font-size: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            border: 3px solid transparent;
-            opacity: 0.6;
-            transition: all 0.2s;
-            outline: none;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 1.5rem;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            margin-bottom: 1rem;
         }
 
-        /* Selected State */
-        .avatar-option.selected {
-            opacity: 1; transform: scale(1.2);
-            border-color: #fff;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
-        }
-
-        /* TV Focus State for Avatar Options */
-        .avatar-option:focus {
-            opacity: 1; transform: scale(1.3);
-            border-color: var(--accent);
-            box-shadow: 0 0 25px rgba(0, 255, 187, 0.4);
-        }
-
-        /* Input Field */
-        .input-group { margin-bottom: 3rem; }
-        .name-input {
-            width: 100%; background: transparent; border: none;
+        input[type="text"] {
+            background: transparent;
+            border: none;
             border-bottom: 2px solid #333;
-            font-family: 'Inter', sans-serif; font-size: 2rem; color: #fff;
-            padding: 10px 0; text-align: center; outline: none;
+            color: white;
+            font-size: 2rem;
+            text-align: center;
+            padding: 0.5rem;
+            width: 300px;
+            font-family: inherit;
+            outline: none;
             transition: border-color 0.3s;
         }
-        .name-input:focus { border-color: var(--accent); }
 
-        /* Buttons */
-        .action-buttons { display: flex; gap: 1rem; justify-content: center; }
+        input[type="text"]:focus {
+            border-color: var(--accent);
+        }
+
+        input[type="text"]::placeholder {
+            color: #444;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
         .btn {
-            padding: 12px 30px; font-size: 1.1rem; font-weight: 600;
-            cursor: pointer; border: 2px solid transparent;
-            background: transparent; color: #888;
-            transition: all 0.2s; text-transform: uppercase;
-            outline: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s;
         }
-        
-        .btn-save { background: #fff; color: #000; border-color: #fff; }
-        
-        /* TV Focus for Buttons */
-        .btn:focus { transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.3); }
-        .btn-save:hover, .btn-save:focus { background: var(--accent); border-color: var(--accent); color: #000; }
-        .btn-cancel { border: 1px solid #333; }
-        .btn-cancel:hover, .btn-cancel:focus { border-color: #fff; color: #fff; }
 
-        /* --- Loading Spinner --- */
-        .loading-redirect {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: #000; z-index: 200;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.4s;
+        .btn:active { transform: scale(0.95); }
+
+        .btn-primary {
+            background: var(--text-main);
+            color: #000;
         }
-        .spinner {
-            width: 50px; height: 50px;
-            border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent);
-            border-radius: 50%; animation: spin 0.8s infinite ease-in-out;
+
+        .btn-secondary {
+            background: #222;
+            color: #888;
+        }
+
+        /* --- Loading / Error States --- */
+        .loading {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
-        @keyframes fadeDown { to { opacity: 1; transform: translateY(0); } from { opacity: 0; transform: translateY(-20px); } }
-        @keyframes popIn { to { opacity: 1; transform: scale(1); } from { opacity: 0; transform: scale(0.8); } }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        .shake {
+            animation: shake 0.3s ease-in-out;
+            border-bottom-color: var(--danger) !important;
+            color: var(--danger) !important;
+        }
 
     </style>
 </head>
 <body>
 
-    <div class="logo" id="app-logo">QURANLITE</div>
-    <h1 class="main-title" id="page-title">Who is reading?</h1>
+    <h1>Who is reading?</h1>
 
-    <div class="profile-container" id="profile-grid">
+    <div class="profile-grid" id="profileGrid">
         </div>
 
-    <div class="add-overlay" id="add-overlay">
-        <div class="add-content">
-            <h2 class="add-title">Add Profile</h2>
-            <p class="add-subtitle">Choose an icon and enter a name.</p>
+    <div class="profile-selection-overlay" id="overlay">
+        <div class="input-group">
+            <h2>New Profile</h2>
             
-            <div class="avatar-selector" id="avatar-selector">
-                </div>
-
-            <div class="input-group">
-                <input type="text" id="new-name-input" class="name-input" placeholder="Name" maxlength="12" autocomplete="off" tabindex="0">
+            <div class="avatar-preview" id="avatarPreview" onclick="cycleAvatar()">
+                A
             </div>
-
+            
+            <input type="text" id="nameInput" placeholder="Enter Name" maxlength="12" autocomplete="off">
+            
             <div class="action-buttons">
-                <button class="btn btn-save" onclick="saveNewProfile()" tabindex="0">Save</button>
-                <button class="btn btn-cancel" onclick="closeAddUI()" tabindex="0">Cancel</button>
+                <button class="btn btn-secondary" onclick="closeAddUI()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveNewProfile()" id="saveBtn">Save</button>
             </div>
         </div>
-    </div>
-
-    <div class="loading-redirect" id="loader">
-        <div class="spinner"></div>
     </div>
 
     <script>
-        // --- Data ---
-        // 5 distinct gradients for users to pick from
-        const AVATAR_OPTIONS = [
-            'linear-gradient(135deg, #FF00CC, #333399)', // Purple/Pink
-            'linear-gradient(135deg, #00C6FF, #0072FF)', // Blue/Cyan
-            'linear-gradient(135deg, #FDBB2D, #22C1C3)', // Yellow/Teal
-            'linear-gradient(135deg, #f12711, #f5af19)', // Red/Orange
-            'linear-gradient(135deg, #11998e, #38ef7d)'  // Green
-        ];
-
+        // --- Data & State ---
+        const AVATAR_OPTIONS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9B59B6', '#3498DB'];
         let profiles = JSON.parse(localStorage.getItem('quran_profiles')) || [];
-        // Default profile if none exist
-        if (profiles.length === 0) {
-            profiles.push({ id: 'user_' + Date.now(), name: 'Guest', color: AVATAR_OPTIONS[1] });
-            localStorage.setItem('quran_profiles', JSON.stringify(profiles));
-        }
+        let selectedAvatarIndex = 0;
 
-        let selectedAvatarIndex = 0; // Tracks which color is currently picked in the overlay
+        const grid = document.getElementById('profileGrid');
+        const overlay = document.getElementById('overlay');
+        const nameInput = document.getElementById('nameInput');
+        const avatarPreview = document.getElementById('avatarPreview');
+        const saveBtn = document.getElementById('saveBtn');
 
-        // --- DOM Elements ---
-        const grid = document.getElementById('profile-grid');
-        const overlay = document.getElementById('add-overlay');
-        const avatarSelector = document.getElementById('avatar-selector');
-        const nameInput = document.getElementById('new-name-input');
-        const loader = document.getElementById('loader');
-        const mainTitle = document.getElementById('page-title');
-        const appLogo = document.getElementById('app-logo');
-
-        // --- Render Main Menu ---
+        // --- Render Main Grid ---
         function renderProfiles() {
             grid.innerHTML = '';
 
-            profiles.forEach((p, index) => {
+            // 1. Existing Profiles
+            profiles.forEach(profile => {
                 const card = document.createElement('div');
                 card.className = 'profile-card';
-                card.tabIndex = 0; // Make focusable for TV
-                card.onclick = () => selectProfile(p.id);
-                // Allow "Enter" key on remote to trigger click
-                card.onkeydown = (e) => { if(e.key === 'Enter') selectProfile(p.id); };
+                card.tabIndex = 0; // Focusable for TV
+                card.onclick = () => selectProfile(profile);
+                card.onkeydown = (e) => { if(e.key === 'Enter') selectProfile(profile); };
+
+                // Initials logic
+                const initial = profile.name.charAt(0).toUpperCase();
 
                 card.innerHTML = `
-                    <div class="avatar" style="background: ${p.color}"><span>💠</span></div>
-                    <div class="profile-name">${p.name}</div>
+                    <div class="avatar" style="background-color: ${profile.color}">
+                        ${initial}
+                    </div>
+                    <div class="profile-name">${profile.name}</div>
                 `;
                 grid.appendChild(card);
             });
 
-            // "Add Profile" Button
+            // 2. "Add Profile" Button
             if (profiles.length < 5) {
                 const addBtn = document.createElement('div');
-                addBtn.className = 'profile-card add-profile-btn';
-                addBtn.tabIndex = 0; // Focusable
+                addBtn.className = 'profile-card add-btn';
+                addBtn.tabIndex = 0;
                 addBtn.onclick = openAddUI;
                 addBtn.onkeydown = (e) => { if(e.key === 'Enter') openAddUI(); };
-                
                 addBtn.innerHTML = `
-                    <div class="avatar">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                        </svg>
-                    </div>
+                    <div class="avatar">+</div>
                     <div class="profile-name">Add Profile</div>
                 `;
                 grid.appendChild(addBtn);
             }
-            
-            // TV Usability: Auto-focus the first profile after rendering
-            setTimeout(() => {
-                const first = grid.querySelector('.profile-card');
-                if(first) first.focus();
-            }, 100);
         }
 
-        // --- Action: Select Profile ---
-        function selectProfile(id) {
-            loader.style.opacity = '1';
-            localStorage.setItem('quran_active_profile', id);
-            setTimeout(() => { window.location.href = 'reading/'; }, 600);
+        // --- Select Profile Action ---
+        function selectProfile(profile) {
+            // Save current active user ID to session/local storage if needed
+            localStorage.setItem('current_user_id', profile.id);
+            // Navigate to main app
+            window.location.href = '/reading/'; 
         }
 
-        // --- UI: Open "Add Profile" Modal ---
+        // --- Add UI Logic ---
         function openAddUI() {
-            // Render the color choices
-            avatarSelector.innerHTML = '';
-            selectedAvatarIndex = 0; // Reset to first
-
-            AVATAR_OPTIONS.forEach((color, index) => {
-                const opt = document.createElement('div');
-                opt.className = 'avatar-option';
-                if(index === 0) opt.classList.add('selected');
-                opt.style.background = color;
-                opt.tabIndex = 0; // Focusable
-                opt.innerHTML = '<span>💠</span>'; // Simple icon
-                
-                // Click to select
-                opt.onclick = () => {
-                    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
-                    opt.classList.add('selected');
-                    selectedAvatarIndex = index;
-                };
-                
-                // Enter key to select
-                opt.onkeydown = (e) => {
-                    if (e.key === 'Enter') {
-                        opt.click();
-                        // Optional: Move focus to input after selection
-                        nameInput.focus();
-                    }
-                };
-
-                avatarSelector.appendChild(opt);
-            });
-
+            // Reset state
             nameInput.value = '';
+            nameInput.placeholder = "Enter Name";
+            nameInput.classList.remove('shake');
+            selectedAvatarIndex = Math.floor(Math.random() * AVATAR_OPTIONS.length);
+            updateAvatarPreview();
             
-            // Visual Blur Background
-            grid.style.transform = 'scale(1.1)';
-            grid.style.filter = 'blur(10px)';
-            grid.style.opacity = '0.5';
-            mainTitle.style.opacity = '0';
-            appLogo.style.opacity = '0';
-
             overlay.classList.add('active');
-            
-            // TV UX: Focus the first avatar option immediately
-            setTimeout(() => {
-                const firstOpt = avatarSelector.querySelector('.avatar-option');
-                if(firstOpt) firstOpt.focus();
-            }, 100);
+            nameInput.focus();
         }
 
-        // --- UI: Close "Add Profile" Modal ---
         function closeAddUI() {
             overlay.classList.remove('active');
-            
-            // Restore Background
-            grid.style.transform = 'scale(1)';
-            grid.style.filter = 'none';
-            grid.style.opacity = '1';
-            mainTitle.style.opacity = '1';
-            appLogo.style.opacity = '1';
-
-            // TV UX: Return focus to the "Add Profile" button
+            // Refocus on the "Add" button in the grid for TV accessibility
             setTimeout(() => {
-                const addBtn = document.querySelector('.add-profile-btn');
+                const addBtn = document.querySelector('.add-btn');
                 if(addBtn) addBtn.focus();
             }, 300);
         }
 
-        // --- Logic: Save Profile ---
-        function saveNewProfile() {
-            const name = nameInput.value.trim();
-            if (name.length > 0) {
-                const newProfile = {
-                    id: 'user_' + Date.now(),
-                    name: name.substring(0, 10),
-                    color: AVATAR_OPTIONS[selectedAvatarIndex]
-                };
-                profiles.push(newProfile);
-                localStorage.setItem('quran_profiles', JSON.stringify(profiles));
-                
-                renderProfiles();
-                closeAddUI();
-            } else {
-                // Shake effect on error
-                nameInput.style.borderColor = '#f55';
-                setTimeout(() => nameInput.style.borderColor = '#333', 500);
+        function cycleAvatar() {
+            selectedAvatarIndex = (selectedAvatarIndex + 1) % AVATAR_OPTIONS.length;
+            updateAvatarPreview();
+        }
+
+        function updateAvatarPreview() {
+            avatarPreview.style.backgroundColor = AVATAR_OPTIONS[selectedAvatarIndex];
+            // Update initial in preview if name exists, else default char
+            const val = nameInput.value.trim();
+            avatarPreview.textContent = val.length > 0 ? val.charAt(0).toUpperCase() : 'A';
+        }
+
+        nameInput.addEventListener('input', () => {
+            updateAvatarPreview();
+            nameInput.classList.remove('shake'); // Remove error state on typing
+        });
+
+        // --- CORE: AI SAFETY CHECK & SAVE ---
+        async function saveNewProfile() {
+            const nameRaw = nameInput.value.trim();
+            if (nameRaw.length === 0) return;
+
+            // 1. UI State: Loading
+            const originalPlaceholder = nameInput.placeholder;
+            nameInput.value = "";
+            nameInput.placeholder = "AI Checking...";
+            nameInput.disabled = true;
+            saveBtn.classList.add('loading');
+            saveBtn.textContent = "...";
+
+            try {
+                // 2. Send to Cloudflare Worker
+                const response = await fetch('/api/validate-name', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: nameRaw })
+                });
+
+                if (!response.ok) throw new Error("Network error");
+
+                const result = await response.json();
+
+                // 3. Check AI Verdict
+                // Note: The AI returns { safe: true } OR { safe: false }
+                if (result.safe === true) {
+                    
+                    // SUCCESS - Create Profile
+                    const newProfile = {
+                        id: 'user_' + Date.now(),
+                        name: nameRaw, // Keep original casing
+                        color: AVATAR_OPTIONS[selectedAvatarIndex]
+                    };
+                    profiles.push(newProfile);
+                    localStorage.setItem('quran_profiles', JSON.stringify(profiles));
+                    
+                    renderProfiles();
+                    
+                    // Reset UI before closing
+                    nameInput.disabled = false;
+                    saveBtn.classList.remove('loading');
+                    saveBtn.textContent = "Save";
+                    closeAddUI();
+
+                } else {
+                    // FAILURE - The Name was rejected
+                    throw new Error("Unsafe name");
+                }
+
+            } catch (error) {
+                // 4. Handle Errors (Network or Safety)
+                console.error(error);
+
+                // Restore Input
+                nameInput.disabled = false;
+                nameInput.value = nameRaw; // Give text back so they can edit
+                nameInput.placeholder = originalPlaceholder;
+                saveBtn.classList.remove('loading');
+                saveBtn.textContent = "Save";
+
+                // Visual Feedback (Shake & Red)
+                nameInput.classList.add('shake');
                 nameInput.focus();
+
+                // Optional: Show specific message in placeholder temporarily
+                const oldPlace = nameInput.placeholder;
+                nameInput.value = "";
+                nameInput.placeholder = "Name not allowed!";
+                setTimeout(() => {
+                    if(nameInput.value === "") nameInput.value = nameRaw;
+                    nameInput.placeholder = oldPlace;
+                }, 1500);
             }
         }
 
@@ -450,7 +440,7 @@
             if (e.key === 'Enter') saveNewProfile();
         });
 
-        // Global Back Button Support (Android TV "Back" usually sends Escape or Backspace)
+        // Global Back Button Support
         window.addEventListener('keydown', (e) => {
             if ((e.key === 'Escape' || e.key === 'Backspace') && overlay.classList.contains('active')) {
                 closeAddUI();
