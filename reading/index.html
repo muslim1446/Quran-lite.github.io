@@ -410,7 +410,6 @@
     </head>
 <body>
 
-    <!-- NEW: Intro Overlay and Audio -->
     <div id="intro-overlay" style="display:none;">
         <div class="intro-logo">THE QURAN</div>
     </div>
@@ -440,7 +439,7 @@
         <div class="results-section">
             <div class="row-header" style="margin-top:0;">Top Results</div>
             <div class="results-grid" id="search-results-grid">
-                <div class="no-results">Start typing to search Surahs...</div>
+                <div class="no-results">Use the keyboard to describe a topic...</div>
             </div>
         </div>
     </div>
@@ -475,7 +474,7 @@
         </div>
 
         <div class="row-section">
-            <div class="row-header">For you</div>
+            <div class="row-header">Currently Popular</div>
             <div class="card-scroller" id="trending-row"></div>
         </div>
 
@@ -1545,7 +1544,9 @@
             el.classList.add('active');
         }
 
-        // --- 4. SEARCH & KEYBOARD LOGIC ---
+        // --- 4. SEARCH & KEYBOARD LOGIC (AI POWERED) ---
+        let searchDebounceTimer;
+
         function initSearchInterface() {
             renderKeyboard();
             
@@ -1586,52 +1587,88 @@
             else searchString += key;
             
             elements.search.inputDisplay.textContent = searchString;
-            performSearch();
+            
+            // Debounce the AI search (wait 800ms after last keypress)
+            clearTimeout(searchDebounceTimer);
+            
+            if (searchString.length > 2) {
+                // Show loading immediately while typing implies waiting
+                elements.search.resultsGrid.innerHTML = `
+                    <div class="loader-content" style="padding-top:2rem">
+                        <div class="loader-spinner" style="width:30px;height:30px;border-width:2px;"></div>
+                        <div style="color:#666; font-size:1.2rem">AI is searching...</div>
+                    </div>`;
+                
+                searchDebounceTimer = setTimeout(() => {
+                    performAISearch();
+                }, 800);
+            } else {
+                elements.search.resultsGrid.innerHTML = '<div class="no-results">Type at least 3 characters...</div>';
+            }
         }
 
-        function performSearch() {
-            const query = searchString.toLowerCase().trim();
+        async function performAISearch() {
+            const query = searchString.trim();
             const resultsContainer = elements.search.resultsGrid;
-            resultsContainer.innerHTML = '';
 
-            if(!query) {
-                resultsContainer.innerHTML = '<div class="no-results">Start typing to search Surahs...</div>';
-                return;
+            if(!query) return;
+
+            try {
+                // Call Cloudflare Workers AI Endpoint
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error("AI Search failed");
+                
+                // Expecting array of Chapter Numbers: e.g., [1, 2, 55]
+                const chapterIds = await response.json();
+
+                resultsContainer.innerHTML = '';
+
+                if (!chapterIds || chapterIds.length === 0) {
+                    resultsContainer.innerHTML = '<div class="no-results">No relevant Surahs found.</div>';
+                    return;
+                }
+
+                // Map AI results (Integers) to your Local MetaData
+                // We map Chapter Number (1-based) to Array Index (0-based)
+                const foundSurahs = chapterIds
+                    .map(num => quranData.find(s => s.chapterNumber === num))
+                    .filter(Boolean); // Remove nulls if AI hallucinates a number > 114
+
+                if (foundSurahs.length === 0) {
+                    resultsContainer.innerHTML = '<div class="no-results">No matches found.</div>';
+                    return;
+                }
+
+                foundSurahs.forEach(surah => {
+                    const card = document.createElement('div');
+                    card.className = 'surah-card';
+                    card.tabIndex = 0;
+                    card.dataset.chapter = surah.chapterNumber;
+                    // Visual cue that this is an AI result
+                    card.style.borderColor = 'rgba(0, 255, 187, 0.3)'; 
+                    
+                    card.innerHTML = `
+                        <div class="card-bg-num">${surah.chapterNumber}</div>
+                        <div class="card-title">${surah.title}</div>
+                        <div class="card-sub">${surah.english_name || ''}</div>
+                    `;
+                    card.onclick = () => { closeSearch(); launchPlayer(surah.chapterNumber, 1); };
+                    card.onkeydown = (e) => { if(e.key === 'Enter') card.click(); };
+                    resultsContainer.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+                resultsContainer.innerHTML = '<div class="no-results">Search service unavailable.</div>';
             }
-
-            const results = quranData.filter(s => 
-                s.title.toLowerCase().includes(query) || 
-                (s.english_name && s.english_name.toLowerCase().includes(query)) ||
-                String(s.chapterNumber).includes(query)
-            );
-
-            if (results.length === 0) {
-                resultsContainer.innerHTML = '<div class="no-results">No matches found</div>';
-                return;
-            }
-
-            results.forEach(surah => {
-                const card = document.createElement('div');
-                card.className = 'surah-card';
-                card.tabIndex = 0;
-                card.dataset.chapter = surah.chapterNumber;
-                card.innerHTML = `
-                    <div class="card-bg-num">${surah.chapterNumber}</div>
-                    <div class="card-title">${surah.title}</div>
-                    <div class="card-sub">${surah.english_name || ''}</div>
-                `;
-                card.onclick = () => { closeSearch(); launchPlayer(surah.chapterNumber, 1); };
-                card.onkeydown = (e) => { if(e.key === 'Enter') card.click(); };
-                resultsContainer.appendChild(card);
-            });
         }
 
         function openSearch() {
             elements.search.overlay.classList.add('active');
             searchString = "";
             elements.search.inputDisplay.textContent = "";
-            elements.search.resultsGrid.innerHTML = '<div class="no-results">Start typing...</div>';
-            // Focus first key
+            elements.search.resultsGrid.innerHTML = '<div class="no-results">Use the keyboard to describe a topic...<br><span style="font-size:1.2rem;color:#444">(e.g. "Story of Joseph", "Laws of inheritance")</span></div>';
+            
             setTimeout(() => {
                 const firstKey = elements.search.keyboardGrid.querySelector('.key');
                 if(firstKey) firstKey.focus();
