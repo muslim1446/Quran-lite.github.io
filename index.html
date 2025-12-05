@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <script>
-        // Redirect logic
+        // Keep your existing redirect logic
         if (window.location.hostname.includes('github.io')) {
             var newUrl = window.location.href.replace('github.io', 'pages.dev');
             window.location.replace(newUrl); 
@@ -11,9 +11,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>QuranLite - Distraction Free Quran Player</title>
-    
-    <meta name="description" content="A minimalist, distraction-free Quran player. Listen to high-quality recitations, manage profiles, and read translations without interruptions.">
+    <link rel="canonical" href="https://quran-lite.pages.dev/">
+
+    <title>Quran for Human - Read & Listen Without Distractions</title>
+    <meta name="description" content="The Quran made simple. Read or listen to the full scripture in a distraction-free player. No ads, no clutter, just the message..">
+
+    <meta name="application-name" content="Quran for Human">
+    <meta name="apple-mobile-web-app-title" content="Quran for Human">
+    <meta property="og:site_name" content="Quran for Human">
+    <meta property="og:title" content="Quran for Human">
+    <meta property="og:description" content="Distraction-free Quran player with profile management.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quran-lite.pages.dev/">
+    <meta property="og:image" content="https://quran-lite.pages.dev/favicon.png">
 
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
@@ -21,39 +31,45 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "QuranLite",
-      "alternateName": ["Quran Lite", "QuranLite App"],
+      "@type": "WebApplication",
+      "name": "Quran for Human",
+      "alternateName": "Quran for Human App",
       "url": "https://quran-lite.pages.dev/",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Quran for Human",
+        "url": "https://quran-lite.pages.dev/"
+      },
       "image": "https://quran-lite.pages.dev/favicon.png"
     }
     </script>
-
-    <meta property="og:site_name" content="QuranLite">
-    <meta property="og:title" content="QuranLite - Distraction Free Quran Player">
-    <meta property="og:description" content="A minimalist, distraction-free Quran player.">
-    <meta property="og:image" content="https://quran-lite.pages.dev/social-preview.png">
-    <meta property="og:type" content="website">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDWXFDCQRH"></script>
+ <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDWXFDCQRH"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-PDWXFDCQRH');
     </script>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
+
 <style>
         :root {
             --bg-color: #000000;
-            --panel-bg: #2596be;
+            --panel-bg: #00FFBB;
             --text-main: #ffffff;
-            --text-muted: #2596be;
-            --accent: #2596be; /* Netflix Red-ish */
+            --text-muted: #00FFBB;
+            --accent: #00FFBB; /* Netflix Red-ish */
             --focus-border: #ffffff;
             --glass: rgba(255, 255, 255, 0.1);
-            --gold: #2596be;
+            --gold: #00FFBB;
         }
 
         body {
@@ -78,7 +94,7 @@
             box-shadow: 10px 0 50px rgba(0,0,0,0.8);
         }
 
-        .logo {
+        .xlogo {
             font-size: 2.5rem;
             font-weight: 800;
             color: var(--accent);
@@ -327,13 +343,162 @@
             25% { transform: translateX(-3px); }
             75% { transform: translateX(3px); }
         }
+/* 2. H1 CONTAINER STYLING */
+        #phantom-heading {
+            position: fixed;
+            top: 20px;
+            /* Safe mode logic: uses max() for notch safety */
+            left: max(20px, env(safe-area-inset-left));
+            margin: 0;
+            z-index: 9999;
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+            color: inherit; 
+            white-space: pre; 
+            pointer-events: none;
+        }
+
+        /* 3. ANIMATION STATES */
+        .char-span {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(10px);    
+            transform: translateX(-15px); /* Slightly more movement for dramatic effect */
+            
+            /* Transition settings */
+            transition: opacity 0.5s ease-out, 
+                        filter 0.5s ease-out, 
+                        transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            
+            color: inherit; 
+        }
+
+        /* Visible State */
+        .char-span.visible {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateX(0);
+        }
 
     </style>
-    </head>
 
+</head>
 <body>
 
-    <div class="sidebar">
+    <header>
+        <h1 class="logo" onclick="goHome()" id="phantom-heading">Quran for Human</h1>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const h1 = document.getElementById('phantom-heading');
+            
+            // Define the split point: The first 5 letters (WERTY) vs the rest
+            const splitIndex = 5; 
+
+            // 1. Prepare text
+            const textContent = h1.textContent;
+            h1.innerHTML = ''; 
+            
+            const chars = textContent.split('').map((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.className = 'char-span';
+                
+                // --- NEW SIZING LOGIC ---
+                if (index < 5) {
+                    // "WERTY" (Indices 0-4): 40% bigger
+                    span.style.fontSize = '1.4em'; 
+                } 
+                else if (index === 5) {
+                    // "F" (Index 5): Base size for the second word
+                    span.style.fontSize = '1em';
+                }
+                else if (index > 5 && index < 8) {
+                    // "OR" (Indices 6, 7): 20% smaller than F
+                    span.style.fontSize = '0.8em';
+                }
+                else {
+                    // "HUMAN" (Indices 8+): 20% smaller than FOR (assuming relative to F)
+                    span.style.fontSize = '0.8em';
+                }
+                
+                if (char === ' ') span.style.width = '0.3em'; 
+                h1.appendChild(span);
+                return span;
+            });
+
+            // Configuration
+            const staggerDelay = 100; // Time between individual letters appearing
+            const stayDuration = 3000; // 3 seconds wait
+            
+            // ---------------------------------------------
+            // 2. ENTRANCE ANIMATION
+            // ---------------------------------------------
+            
+            let maxEntranceTime = 0;
+
+            chars.forEach((span, index) => {
+                let delay = 0;
+
+                if (index < splitIndex) {
+                    // First 5 letters (WERTY): Appear together
+                    delay = 100; 
+                } else {
+                    // Remaining letters (FORHUMAN): Staggered start
+                    // index 5 gets 1 unit of delay, index 6 gets 2, etc.
+                    delay = 100 + ((index - splitIndex + 1) * staggerDelay);
+                }
+
+                setTimeout(() => {
+                    span.classList.add('visible');
+                }, delay);
+
+                if (delay > maxEntranceTime) maxEntranceTime = delay;
+            });
+
+            // ---------------------------------------------
+            // 3. WAIT & EXIT ANIMATION
+            // ---------------------------------------------
+            
+            const timeUntilExit = maxEntranceTime + 500 + stayDuration;
+
+            setTimeout(() => {
+                
+                // Reverse logic: Rest of word fades first, then the block (WERTY) fades last
+
+                chars.forEach((span, index) => {
+                    let exitDelay = 0;
+
+                    if (index >= splitIndex) {
+                        // "FORHUMAN" part: Disappear one by one in reverse (N, A, M, U, H, R, O, F)
+                        const reverseOrder = (chars.length - 1) - index; 
+                        exitDelay = reverseOrder * staggerDelay;
+                    } else {
+                        // "WERTY" part: Disappear together AFTER everything else
+                        // Calculate total time for the tail to fade
+                        const tailLength = chars.length - splitIndex;
+                        const timeForTailToFade = tailLength * staggerDelay;
+                        
+                        exitDelay = timeForTailToFade + 100;
+                    }
+
+                    setTimeout(() => {
+                        span.classList.remove('visible');
+                    }, exitDelay);
+                });
+
+                // 4. CLEANUP DOM
+                const totalExitTime = ((chars.length - splitIndex) * staggerDelay) + 600;
+                setTimeout(() => {
+                    h1.style.display = 'none';
+                    console.log("Animation complete, H1 removed.");
+                }, totalExitTime);
+
+            }, timeUntilExit);
+        });
+    </script>
+       </header>
+ <div class="sidebar">
         <div class="logo"></div>
         
         <div class="profile-list-container" id="profileList">
@@ -376,8 +541,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+  <script>
         // --- 1. DATA: The 114 Surahs ---
         const SURAH_DATA = [
           { "chapter": 1, "arabic_name": "Al-Fatihah", "english_name": "The Opening", "description": "Revealed in Mecca, this is the fundamental prayer of Islam, summarizing the core relationship between God and humanity. (7 verses)" },
@@ -497,7 +661,7 @@
         ];
 
         // --- 2. LOGIC: State & Elements ---
-        const AVATAR_OPTIONS = ['#2596be', '#564d80', '#448ef6', '#f5ce36', '#8e36f5', '#36f58e'];
+        const AVATAR_OPTIONS = ['#00FFBB', '#564d80', '#448ef6', '#f5ce36', '#8e36f5', '#36f58e'];
         let profiles = JSON.parse(localStorage.getItem('quran_profiles')) || [];
         
         let focusIndex = 0; // 0 to N (Profiles), N+1 is Manage Button
@@ -694,7 +858,7 @@
                 
                 // Visual Error (Color Flash)
                 const originalColor = elNameInput.style.color;
-                elNameInput.style.color = "#2596be"; 
+                elNameInput.style.color = "#00FFBB"; 
                 setTimeout(()=> elNameInput.style.color = originalColor, 1000);
             }
         }
@@ -778,5 +942,11 @@
         startPreviewLoop();
 
     </script>
+
+ 
+
+
+
+ 
 </body>
 </html>
