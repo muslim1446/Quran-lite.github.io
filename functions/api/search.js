@@ -1,13 +1,35 @@
 export async function onRequest(context) {
     const { request, env } = context;
+
+    // 1. DEFINE CORS HEADERS
+    // This tells the browser: "It is okay to accept data from any website (*)"
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    };
+
+    // 2. HANDLE PREFLIGHT REQUESTS (Browser Security Check)
+    // Browsers send an "OPTIONS" request first to check if it's safe.
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: corsHeaders,
+      });
+    }
+
     const url = new URL(request.url);
     const query = url.searchParams.get('q');
 
+    // Return empty array if query is too short
     if (!query || query.length < 2) {
-      return new Response(JSON.stringify([]), { headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify([]), { 
+          headers: { 
+              ...corsHeaders,
+              "Content-Type": "application/json" 
+          } 
+      });
     }
 
-    // specific system prompt to force JSON output and map concepts to Surah numbers
     const systemPrompt = `
       You are a Quranic Search Engine API.
       Your goal is to accept a User Query (which might be a topic, a story, a specific name with typos, or a concept) and return the most relevant Surah numbers.
@@ -24,6 +46,7 @@ export async function onRequest(context) {
     const userPrompt = `User Query: "${query}"`;
 
     try {
+      // 3. RUN AI MODEL
       const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
         messages: [
           { role: 'system', content: systemPrompt },
@@ -31,19 +54,30 @@ export async function onRequest(context) {
         ]
       });
 
-      // The AI might occasionally wrap code in backticks, clean it
       let rawText = response.response;
-      // Extract array using regex if AI chats too much
+      
+      // Clean up AI output if it adds markdown code blocks
       const match = rawText.match(/\[[\s\d,]*\]/);
       if (match) {
          rawText = match[0];
       }
 
+      // 4. RETURN RESPONSE WITH HEADERS
       return new Response(rawText, {
-        headers: { "Content-Type": "application/json" }
+        headers: { 
+            ...corsHeaders,
+            "Content-Type": "application/json" 
+        }
       });
 
     } catch (e) {
-      return new Response(JSON.stringify([]), { status: 500 });
+      // Return error with headers so the frontend can see it
+      return new Response(JSON.stringify([]), { 
+          status: 500,
+          headers: { 
+              ...corsHeaders,
+              "Content-Type": "application/json" 
+          } 
+      });
     }
-  }
+}
