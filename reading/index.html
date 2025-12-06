@@ -326,10 +326,65 @@
         
         audio { display: none; }
 
-       /* --- 9:16 MOBILE PORTRAIT PERFORMANCE OVERRIDES --- */
+        /* --- 9:16 MOBILE PORTRAIT PERFORMANCE OVERRIDES --- */
     /* Optimized for Google Web Vitals (LCP, CLS, INP) */
     @media screen and (max-width: 768px) and (orientation: portrait) {
+            .container { padding: 0; padding-bottom: 230px; justify-content: flex-start; }
+            #content-display { margin: 0; justify-content: flex-start; }
+            #verse-container { height: 40vh; margin-bottom: 0; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%); }
+            #verse-text, #verse-text-next { padding: 1rem; max-width: 95%; }
+            #translation-text {
+                width: 92%; margin: 0 auto; background: rgba(255,255,255,0.03); border-radius: 12px 12px 0 0;
+                padding: 2rem; text-align: start; font-size: 1.8rem !important; flex-grow: 1; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05);
+            }
+            #control-panel {
+                background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+                border-top: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+                display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+            }
+            body.idle #control-panel { transform: none; opacity: 1; }
+            select { width: 100%; height: 48px; font-size: 1.4rem; }
+            #chapterSelect { grid-column: 1 / -1; background-color: rgba(30,30,30,0.8); color: var(--accent); font-weight: 600; }
+        }
 
+        /* NEW: Netflix-style Intro Transition Styles */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.8s ease-out;
+        }
+        .intro-logo {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 5rem;
+            font-weight: 700;
+            color: #fff; /* Charismatic White for  */
+            letter-spacing: 1px;
+            animation: logoZoom 3.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            text-transform: uppercase;
+        }
+        @keyframes logoZoom {
+            0% { transform: scale(1); opacity: 0; }
+            20% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { transform: scale(3.5); opacity: 0; }
+        }
+        .intro-fade-out {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+        /* Mobile adjustment */
+        @media (max-width: 768px) {
+            .intro-logo { font-size: 3rem; }
+        }
         /* 1. VIEWPORT & LAYOUT STABILITY (CLS Fix) */
         :root {
             --mobile-header-height: 60px;
@@ -424,40 +479,6 @@
             background: #000;
             padding-bottom: env(safe-area-inset-bottom); /* iOS Safe Area */
         }
-
-        #chapter-title {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 2rem 1rem 1rem;
-            font-size: 1.4rem;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-            z-index: 50;
-        }
-
-        #verse-container {
-            /* Reduce container height to give space to translation */
-            height: 35vh; 
-            margin-top: 60px;
-        }
-
-        #verse-text, #verse-text-next {
-            max-width: 100%;
-            padding: 0 1rem;
-        }
-
-        #translation-text {
-            width: 100%;
-            padding: 1.5rem;
-            font-size: 2.5rem !important; /* Optimal reading size */
-            line-height: 1.6;
-            background: transparent;
-            border: none;
-            /* Ensure text contrast meets accessibility standards */
-            color: #ececec; 
-        }
-
         /* 5. CONTROLS (Touch Target Fixes) */
         #control-panel {
             padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)) 1rem;
@@ -503,7 +524,7 @@
         .results-section {
             padding: 1rem;
         }
-    } 
+        }
     </style>
 
     <script type="application/ld+json">
