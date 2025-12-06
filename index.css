@@ -549,233 +549,15 @@
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
-}/* --- REFACTORED MOBILE OPTIMIZATION (NETFLIX STYLE) --- */
-@media screen and (max-width: 768px), screen and (orientation: portrait) {
-
-    /* Global Reset for Mobile View to prevent horizontal scroll */
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        width: 100vw;
-        overflow: hidden !important; /* Locks the main scroll */
-        background: #000;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* 1. Sidebar: Top Horizontal Carousel (Netflix-style Row) */
-    .sidebar {
-        width: 100%;
-        height: auto;
-        flex: 0 0 auto;
-        padding: 15px 0 15px 15px; /* Padding left only for scroll start */
-        background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%);
-        backdrop-filter: blur(10px);
-        z-index: 50;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        
-        display: flex;
-        flex-direction: column;
-        overflow: visible; 
-    }
-
-    /* Clean up the logo area */
-    .logo {
-        display: flex;
-        margin-bottom: 0.8rem;
-        padding-right: 15px;
-        transform: scale(0.9);
-        transform-origin: left center;
-    }
-
-    /* 2. Profile List: Horizontal Scrolling Strip */
-    .profile-list-container {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        gap: 27.2px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding-right: 20px;
-        -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
-        scrollbar-width: none;
-    }
-    
-    .profile-list-container::-webkit-scrollbar {
-        display: none;
-    }
-
-    .profile-item {
-        flex: 0 0 auto;
-        width: 70px;
-        padding: 0;
-        background: transparent;
-        border: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 27.2px;
-    }
-
-    .profile-avatar {
-        width: 95px;
-        height: 95px;
-        border-radius: 50%;
-        border: 2px solid transparent;
-        background: #333;
-        font-size: 1.2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.2s ease;
-    }
-    
-    .profile-item.active .profile-avatar {
-        border-color: #e50914;
-        transform: scale(1.05);
-    }
-
-    .profile-info {
-        width: 100%;
-        text-align: center;
-    }
-    
-    .profile-name {
-        font-size: 0.7rem;
-        color: #b3b3b3;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block;
-    }
-
-    .profile-status, .action-buttons, .btn-action {
-        display: none; 
-    }
-
-    /* 3. Preview Area: The "Hero" Section */
-    .preview-area {
-        flex: 1;
-        width: 100%;
-        position: relative;
-        /* Padding creates the Safe Zone from screen edges */
-        padding: 20px 24px 80px 24px; 
-        display: flex;
-        align-items: center; 
-        justify-content: center;
-        overflow-y: auto;
-        overflow-x: hidden;
-        box-sizing: border-box; /* Critical for padding math */
-    }
-
-    .preview-bg {
-        background: radial-gradient(circle at 50% 40%, #2a2a2a 0%, #000000 85%);
-    }
-
-    .spotlight {
-        opacity: 0.4;
-        filter: blur(80px);
-    }
-
-    /* 4. Typography & Content Scaling */
-    .preview-content {
-        width: 100%;
-        max-width: 100%; /* Ensures it never pushes grid wider */
-        text-align: center;
-        overflow-x: hidden; /* Safety clip */
-        animation: fadeIn 0.8s ease-out;
-        
-        /* Flex fix for text wrapping */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .surah-title-en {
-        font-size: 3rem; 
-        font-weight: 800;
-        letter-spacing: -1px;
-        margin-bottom: 0.5rem;
-        background: linear-gradient(to right, #fff, #ccc);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        line-height: 1.1; /* Prevent top cropping */
-    }
-
-    .surah-title-ar {
-        font-size: 2.2rem;
-        color: var(--accent, #e50914);
-        margin-bottom: 1.5rem;
-        font-family: serif;
-    }
-
-    .surah-desc {
-        font-size: 1rem;
-        line-height: 1.6;
-        color: #dcdcdc;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-        border: none;
-        padding: 0;
-        opacity: 0.9;
-        
-        /* THE FIX: Safe Zone Constraints */
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        margin: 0 auto;
-        
-        /* Aggressive Wrapping */
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        word-break: break-word;
-        hyphens: auto; /* Adds hyphens for cleaner breaks */
-        white-space: normal;
-    }
-
-    /* 5. Mobile Search / Input */
-    .input-box {
-        width: 100%;
-        max-width: 100%;
-        margin-bottom: 1rem;
-        box-sizing: border-box;
-    }
-    
-    input[type="text"]:focus::placeholder {
-        color: transparent;
-    }
-
-    .meta-tag {
-        display: inline-flex;
-        margin-top: 20px;
-        background: rgba(255,255,255,0.1);
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        white-space: nowrap;
-    }
-    
-    .meta-tag::before { display: none; }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- REFACTORED MOBILE OPTIMIZATION (NETFLIX + DYNAMIC ISLAND) --- */
+/* --- ENTIRE MOBILE FIX (DYNAMIC ISLAND + NETFLIX SCROLL) --- */
 @media screen and (max-width: 768px), screen and (orientation: portrait) {
 
-    /* Global Reset */
+    /* 1. Global Reset & Layout */
     * {
         box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -786,68 +568,57 @@
         background: #000;
         margin: 0;
         padding: 0;
-        overflow-x: hidden; /* Prevent horizontal overflow globally */
+        overflow-x: hidden;
     }
 
-    /* =========================================
-       1. THE DYNAMIC ISLAND (Modified Sidebar)
-       ========================================= */
+    /* 2. THE DYNAMIC ISLAND (Sidebar Refactored) */
     .sidebar {
-        /* Positioning: Fixed "Island" floating at the top */
+        /* Positioning: Fixed floating pill */
         position: fixed;
-        top: 50px; /* Distance from top edge */
+        top: 20px; /* Distance from top */
         left: 50%;
-        transform: translateX(-50%); /* Centering trick */
+        transform: translateX(-50%); /* Center horizontally */
         
-        /* Sizing: Compact Island Dimensions */
-        width: 94%; 
-        max-width: 380px; /* Don't get too wide on tablets */
+        /* Sizing */
+        width: 90%; 
+        max-width: 380px; 
         height: auto;
         
-        /* Visuals: Glassy Black Pill */
-        background: rgba(20, 20, 20, 0.90);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border-radius: 40px; /* The "Pill" Shape */
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        /* styling: Glassy Black Pill */
+        background: rgba(20, 20, 20, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
         
         /* Layout */
         display: flex;
         align-items: center;
-        padding: 8px 10px; /* Tight padding for island feel */
-        z-index: 1000; /* Must be above everything */
+        justify-content: center; /* Center the list inside */
+        padding: 8px 10px;
+        z-index: 9999; /* Always on top */
         
-        /* ANIMATION 1: Island Entrance (Pop-in) */
+        /* Animations */
         animation: islandPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        
-        /* SCROLL BEHAVIOR TRANSITION */
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+        transition: transform 0.4s ease, opacity 0.4s ease;
     }
 
-    /* STATE: Hidden (Applied via JS when scrolled down) */
-    .sidebar.island-hidden {
-        transform: translate(-50%, -150%); /* Slide up out of view */
-        opacity: 0;
-        pointer-events: none; /* Prevent clicking when hidden */
-    }
-
-    /* Hide Desktop Logo */
+    /* Hide the default logo to save space in the island */
     .logo { display: none; }
 
-    /* =========================================
-       2. PROFILE LIST (Inside the Island)
-       ========================================= */
+    /* 3. PROFILE LIST (Horizontal Scroll inside Island) */
     .profile-list-container {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
-        gap: 10px;
+        gap: 15px; /* Clean spacing between avatars */
         width: 100%;
         overflow-x: auto;
         padding: 5px 5px;
+        justify-content: flex-start; /* Aligns items to start for scrolling */
         
-        /* Hide scrollbars for cleaner look */
+        /* Hide scrollbars */
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
     }
@@ -856,133 +627,144 @@
 
     .profile-item {
         flex: 0 0 auto;
-        width: 50px; /* Smaller width for Island */
-        padding: 0;
+        width: 60px;
         background: transparent;
         border: none;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 27.2px;
+        justify-content: center;
+        gap: 6px; /* Space between avatar and name */
         
-        /* ANIMATION 2: Avatars Slide In */
-        opacity: 0; /* Start hidden */
+        /* Animation Entry */
+        opacity: 0;
         animation: avatarSlide 0.6s ease-out forwards;
     }
 
-    /* Staggered Animations (Netflix Style) */
-    .profile-item:nth-child(1) { animation-delay: 0.3s; }
-    .profile-item:nth-child(2) { animation-delay: 0.4s; }
-    .profile-item:nth-child(3) { animation-delay: 0.5s; }
-    .profile-item:nth-child(4) { animation-delay: 0.6s; }
-    .profile-item:nth-child(5) { animation-delay: 0.7s; }
+    /* Staggered Entrance */
+    .profile-item:nth-child(1) { animation-delay: 0.2s; }
+    .profile-item:nth-child(2) { animation-delay: 0.3s; }
+    .profile-item:nth-child(3) { animation-delay: 0.4s; }
+    .profile-item:nth-child(4) { animation-delay: 0.5s; }
+    .profile-item:nth-child(5) { animation-delay: 0.6s; }
 
     .profile-avatar {
-        width: 62px; /* Smaller avatar */
-        height: 62px;
+        width: 55px; 
+        height: 55px;
         border-radius: 50%;
         background: #333;
         display: flex;
         align-items: center;
         justify-content: center;
         border: 2px solid transparent;
-        transition: transform 0.2s;
-        font-size: 1rem;
+        transition: transform 0.2s, border-color 0.2s;
+        overflow: hidden;
     }
     
     .profile-item.active .profile-avatar {
-        border-color: #e50914;
-        transform: scale(1.1);
+        border-color: #e50914; /* Netflix Red active state */
+        transform: scale(1.05);
     }
 
     .profile-name {
-        font-size: 1.7rem; /* Micro text */
+        font-size: 0.75rem; /* Fixed: was 1.7rem (too big) */
         color: #b3b3b3;
-        max-width: 70px;
+        max-width: 60px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        text-align: center;
     }
 
-    /* Hide desktop elements */
+    /* Hide desktop specific elements */
     .profile-status, .action-buttons, .btn-action { display: none; }
 
-    /* =========================================
-       3. PREVIEW AREA (Safe Zone Logic)
-       ========================================= */
+    /* 4. PREVIEW AREA */
+    .preview-area {
+        flex: 1;
+        width: 100%;
+        position: relative;
+        /* Padding top pushes content below the fixed island */
+        padding: 140px 20px 40px 20px; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+    }
 
     .preview-bg {
         background: radial-gradient(circle at 50% 40%, #2a2a2a 0%, #000000 85%);
-        position: fixed; /* Keep BG fixed while content scrolls */
+        position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
         z-index: -1;
     }
 
-    /* Typography & Content Safe Zone */
-    
-
-    .surah-title-en {
-        display: none;
-
-    }
-
-    .surah-title-ar {
-        display: none;
-
-    }
-
-    .surah-desc {
-        display: none;
-    }
-
+    /* 5. SEARCH INPUT */
     .input-box {
         width: 100%;
+        max-width: 100%;
         margin-bottom: 1rem;
         box-sizing: border-box;
     }
     
     input[type="text"]:focus::placeholder { color: transparent; }
 
+
+    /* =========================================================
+       6. STRICTLY HIDDEN ELEMENTS (As Requested)
+       ========================================================= */
+    
+    .surah-title-en {
+        display: none !important;
+    }
+
+    .surah-title-ar {
+        display: none !important;
+    }
+
+    .surah-desc {
+        display: none !important;
+    }
+
     .meta-tag {
-        display: none; //inline-flex
-
+        display: none !important; 
     }
 
-/* =========================================
-   ANIMATION KEYFRAMES
-   ========================================= */
+    .meta-tag::before {
+        display: none !important;
+    }
 
-/* 1. The Island Pops In (Scale and Drop) */
-@keyframes islandPop {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -150%) scale(0.8);
-    }
-    60% {
-        transform: translate(-50%, 10px) scale(1.02); /* Little bounce down */
-    }
-    100% {
-        opacity: 1;
-        transform: translate(-50%, 0) scale(1);
-    }
-}
 
-/* 2. Avatars Slide from Right */
-@keyframes avatarSlide {
-    0% {
-        opacity: 0;
-        transform: translateX(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
+    /* =========================================================
+       7. ANIMATIONS
+       ========================================================= */
 
-/* 3. Content Fades Up */
-@keyframes contentFadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    /* Island Pop-in */
+    @keyframes islandPop {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -150%) scale(0.8);
+        }
+        60% {
+            transform: translate(-50%, 10px) scale(1.02);
+        }
+        100% {
+            opacity: 1;
+            transform: translate(-50%, 0) scale(1);
+        }
+    }
+
+    /* Avatar Slide */
+    @keyframes avatarSlide {
+        0% {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
 }
 
 </style>
