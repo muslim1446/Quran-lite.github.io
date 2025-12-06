@@ -795,12 +795,12 @@
     .sidebar {
         /* Positioning: Fixed "Island" floating at the top */
         position: fixed;
-        top: 15px; /* Distance from top edge */
+        top: 48px; /* Distance from top edge */
         left: 50%;
         transform: translateX(-50%); /* Centering trick */
         
         /* Sizing: Compact Island Dimensions */
-        width: 90%; 
+        width: 94%; 
         max-width: 380px; /* Don't get too wide on tablets */
         height: auto;
         
@@ -878,8 +878,8 @@
     .profile-item:nth-child(5) { animation-delay: 0.7s; }
 
     .profile-avatar {
-        width: 42px; /* Smaller avatar */
-        height: 42px;
+        width: 62px; /* Smaller avatar */
+        height: 62px;
         border-radius: 50%;
         background: #333;
         display: flex;
@@ -896,7 +896,7 @@
     }
 
     .profile-name {
-        font-size: 0.8rem; /* Micro text */
+        font-size: 1.7rem; /* Micro text */
         color: #b3b3b3;
         max-width: 70px;
         white-space: nowrap;
@@ -941,6 +941,7 @@
     }
 
     .surah-title-en {
+        display: none;
         font-size: 1.4rem;
         font-weight: 800;
         color: #00FFBB;
@@ -953,6 +954,7 @@
     }
 
     .surah-title-ar {
+        display: none;
         font-size: 1.2rem;
         color: #e50914;
         margin-bottom: 1.5rem;
@@ -960,6 +962,7 @@
     }
 
     .surah-desc {
+        display: none;
         font-size: 1rem;
         line-height: 1.6;
         color: #dcdcdc;
