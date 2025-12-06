@@ -326,78 +326,184 @@
         
         audio { display: none; }
 
-        @media (max-width: 768px) {
-            #tv-sidebar { width: 0; overflow: hidden; } /* Hide Sidebar on mobile for now, or adapt */
-            #dashboard-view { padding-left: 0; }
-            #chapter-title {
-                position: relative; top: 0; left: 0; width: 100%; text-align: center; padding: 1.5rem 0; margin-bottom: 1rem;
-                background: linear-gradient(to bottom, #000 50%, transparent); color: var(--accent); mix-blend-mode: normal;
-            }
-            .container { padding: 0; padding-bottom: 230px; justify-content: flex-start; }
-            #content-display { margin: 0; justify-content: flex-start; }
-            #verse-container { height: 40vh; margin-bottom: 0; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%); }
-            #verse-text, #verse-text-next { padding: 1rem; max-width: 95%; }
-            #translation-text {
-                width: 92%; margin: 0 auto; background: rgba(255,255,255,0.03); border-radius: 12px 12px 0 0;
-                padding: 2rem; text-align: start; font-size: 1.8rem !important; flex-grow: 1; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05);
-            }
-            #control-panel {
-                background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-                border-top: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
-                display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
-            }
-            body.idle #control-panel { transform: none; opacity: 1; }
-            select { width: 100%; height: 48px; font-size: 1.4rem; }
-            #chapterSelect { grid-column: 1 / -1; background-color: rgba(30,30,30,0.8); color: var(--accent); font-weight: 600; }
+       /* --- 9:16 MOBILE PORTRAIT PERFORMANCE OVERRIDES --- */
+    /* Optimized for Google Web Vitals (LCP, CLS, INP) */
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+
+        /* 1. VIEWPORT & LAYOUT STABILITY (CLS Fix) */
+        :root {
+            --mobile-header-height: 60px;
         }
 
-        /* NEW: Netflix-style Intro Transition Styles */
-        #intro-overlay {
-            position: fixed;
+        body {
+            height: 100dvh; /* Dynamic height fixes iOS address bar jumps */
+            width: 100vw;
+            overflow-x: hidden;
+            position: fixed; /* Prevents rubber-banding on body */
+        }
+
+        /* 2. DASHBOARD OPTIMIZATION (LCP Fix) */
+        #dashboard-view {
+            padding-left: 0;
+            padding-top: 0;
+            height: 100dvh;
+            overflow-y: auto; /* Native scrolling for performance */
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
+        .hero-banner {
+            /* Reduce height to allow "Next Content" to be visible immediately (LCP) */
+            height: 55vh; 
+            min-height: auto;
+            padding: 8rem 1.5rem 2rem;
+            justify-content: flex-end; /* Push text to bottom */
+            background-attachment: scroll; /* Fixes mobile parallax jank */
+        }
+
+        .hero-content {
+            width: 100%;
+            margin-top: 0;
+        }
+
+        .hero-title-text {
+            font-size: 3.2rem; /* Readable without wrapping excessively */
+            line-height: 1.1;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            -webkit-line-clamp: 3; /* Show less text to paint faster */
+            margin-bottom: 1.5rem;
+            max-width: 100%;
+        }
+
+        .dash-btn {
+            padding: 1rem 2rem;
+            width: 100%; /* Full width button for easier interaction */
+            justify-content: center;
+        }
+
+        /* 3. HORIZONTAL SCROLLING PERFORMANCE (INP Fix) */
+        .row-section {
+            padding: 1rem 0 1rem 0;
+            margin-top: 0; /* Remove negative margin which causes overlap issues */
+            background: #050505;
+        }
+
+        .row-header {
+            padding-left: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        .card-scroller {
+            padding-left: 1.5rem; /* Align with header */
+            padding-right: 1.5rem;
+            gap: 12px;
+            /* Scroll Snap is critical for Mobile UX/INP */
+            scroll-snap-type: x mandatory; 
+            scroll-padding-left: 1.5rem;
+        }
+
+        .surah-card {
+            /* Wider cards for mobile legibility */
+            flex: 0 0 85vw; 
+            scroll-snap-align: start;
+            height: 120px;
+            /* Remove heavy hover effects on touch devices to prevent stuck states */
+            transform: none !important; 
+        }
+
+        .surah-card:active {
+            transform: scale(0.98) !important; /* Simple tactile feedback */
+            background: #222;
+        }
+
+        /* 4. CINEMA/READING MODE (Readability Focus) */
+        #cinema-view {
+            background: #000;
+            padding-bottom: env(safe-area-inset-bottom); /* iOS Safe Area */
+        }
+
+        #chapter-title {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-color: #000;
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
-            transition: opacity 0.8s ease-out;
+            padding: 2rem 1rem 1rem;
+            font-size: 1.4rem;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            z-index: 50;
         }
-        .intro-logo {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            font-size: 5rem;
-            font-weight: 700;
-            color: #fff; /* Charismatic White for Quran */
-            letter-spacing: 1px;
-            animation: logoZoom 3.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-            text-transform: uppercase;
+
+        #verse-container {
+            /* Reduce container height to give space to translation */
+            height: 35vh; 
+            margin-top: 60px;
         }
-        @keyframes logoZoom {
-            0% { transform: scale(1); opacity: 0; }
-            20% { opacity: 1; }
-            85% { opacity: 1; }
-            100% { transform: scale(3.5); opacity: 0; }
+
+        #verse-text, #verse-text-next {
+            max-width: 100%;
+            padding: 0 1rem;
         }
-        .intro-fade-out {
-            opacity: 0 !important;
-            pointer-events: none;
+
+        #translation-text {
+            width: 100%;
+            padding: 1.5rem;
+            font-size: 1.2rem !important; /* Optimal reading size */
+            line-height: 1.6;
+            background: transparent;
+            border: none;
+            /* Ensure text contrast meets accessibility standards */
+            color: #ececec; 
         }
-        /* Mobile adjustment */
-        @media (max-width: 768px) {
-            .intro-logo { font-size: 3rem; }
+
+        /* 5. CONTROLS (Touch Target Fixes) */
+        #control-panel {
+            padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)) 1rem;
+            background: rgba(0,0,0,0.95);
+            gap: 0.8rem;
         }
-/* AI Section Specifics */
-        .ai-card-border {
-            border-color: rgba(0, 255, 187, 0.4) !important;
-            box-shadow: 0 0 15px rgba(0, 255, 187, 0.1);
+
+        select {
+            /* 16px font prevents iOS from zooming in on focus */
+            font-size: 16px; 
+            height: 50px; /* Large touch target */
+            width: 100%;
+            background-color: #222;
         }
-        .ai-card-border:hover {
-            border-color: var(--accent) !important;
-            box-shadow: 0 0 25px rgba(0, 255, 187, 0.3);
+
+        /* 6. HIDE NON-ESSENTIALS */
+        #tv-sidebar { display: none !important; } /* Ensure it's gone */
+        #hero-subtitle-overlay { display: none; } /* Remove floating desktop elements */
+        
+        /* 7. SEARCH OVERLAY MOBILE */
+        #search-overlay {
+            padding-left: 0;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr;
+            overflow-y: auto;
         }
+        
+        .keyboard-section {
+            padding: 1rem;
+            border-right: none;
+            border-bottom: 1px solid #333;
+        }
+        
+        .keyboard-grid {
+            gap: 4px;
+        }
+        
+        .key {
+            padding: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .results-section {
+            padding: 1rem;
+        }
+    } 
     </style>
 
     <script type="application/ld+json">
