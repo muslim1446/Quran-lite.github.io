@@ -182,7 +182,7 @@
             </div>
 
         <div class="action-buttons">
-            <button class="btn-action" id="manageBtn" onclick="toggleEditMode()">Manage Profiles</button>
+            <button class="btn-action" id="manageBtn" onclick="toggleEditMode()">Edit</button>
         </div>
     </div>
 
@@ -204,14 +204,14 @@
         <div class="input-box">
             <h2 style="color:#888; margin-bottom: 2rem;">WHO IS READING?</h2>
             <input type="text" id="nameInput" placeholder="Enter Name" maxlength="12" autocomplete="off">
-            <div style="margin-top: 20px; color: #555; font-size: 0.9rem;">Press Enter to Save • Press ESC to Cancel</div>
+            <div style="margin-top: 20px; color: #555; font-size: 0.9rem;"></div>
         </div>
     </div>
 
     <div class="overlay" id="deleteOverlay">
         <div class="modal">
             <h3>Delete Profile?</h3>
-            <p>This history will be lost forever.</p>
+            <p></p>
             <div class="modal-actions">
                 <button class="btn-modal btn-no" id="btnCancelDel">CANCEL</button>
                 <button class="btn-modal btn-yes" id="btnConfirmDel">DELETE</button>
@@ -402,7 +402,7 @@
                 addItem.innerHTML = `
                     <div class="profile-avatar" style="background:#333; color:#888;">+</div>
                     <div class="profile-info">
-                        <div class="profile-name">Add Profile</div>
+                        <div class="profile-name">Add</div>
                     </div>
                 `;
                 elProfileList.appendChild(addItem);
