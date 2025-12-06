@@ -619,8 +619,29 @@
         startPreviewLoop();
 
     </script>
+    
 
- 
+ <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const sidebar = document.querySelector('.sidebar');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+
+        // 1. If at the VERY TOP (0), show the island
+        if (currentScrollY <= 10) {
+            sidebar.classList.remove('island-hidden');
+        } 
+        // 2. If scrolling DOWN or staying somewhere in middle, hide it
+        else if (currentScrollY > 50) {
+            sidebar.classList.add('island-hidden');
+        }
+        
+        lastScrollY = currentScrollY;
+    });
+});
+</script>
 
 
 
